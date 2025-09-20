@@ -51,6 +51,12 @@ export default function DateSelector({ selectedDate, startTime, endTime, onDateC
   const monthOptions = getMonthOptions()
   const dayOptions = getDayOptions()
 
+  // Create a computed date based on current selections
+  const getCurrentSelectedDate = () => {
+    const year = new Date().getFullYear()
+    return new Date(year, selectedMonth, selectedDay)
+  }
+
   const handleConfirm = () => {
     const year = new Date().getFullYear()
     const date = new Date(year, selectedMonth, selectedDay)
@@ -112,7 +118,7 @@ export default function DateSelector({ selectedDate, startTime, endTime, onDateC
       {/* Date display */}
       <div className="text-center">
         <div className="text-gray-400 text-sm">
-          {selectedDate.toLocaleDateString('ko-KR', { 
+          {getCurrentSelectedDate().toLocaleDateString('ko-KR', { 
             year: 'numeric', 
             month: '2-digit', 
             day: '2-digit' 
