@@ -6,13 +6,14 @@ import { getRecordTypeColor, getRecordTypeLabel } from '@/lib/utils'
 
 interface DateSelectorProps {
   selectedDate: Date
+  selectedType: RecordType
   startTime?: Date
   endTime?: Date | null
   onDateConfirm: (date: Date) => void
   onBack: () => void
 }
 
-export default function DateSelector({ selectedDate, startTime, endTime, onDateConfirm, onBack }: DateSelectorProps) {
+export default function DateSelector({ selectedDate, selectedType, startTime, endTime, onDateConfirm, onBack }: DateSelectorProps) {
   const [selectedMonth, setSelectedMonth] = useState(selectedDate.getMonth())
   const [selectedDay, setSelectedDay] = useState(selectedDate.getDate())
 

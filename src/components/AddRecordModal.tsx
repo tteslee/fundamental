@@ -209,6 +209,7 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
             {selectedType && showDateSelector && !showTimeSelector && !showMemoInput && (
               <DateSelector
                 selectedDate={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
+                selectedType={selectedType}
                 startTime={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
                 endTime={endTimeComponents ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endTimeComponents.hours, endTimeComponents.minutes) : null}
                 onDateConfirm={handleDateConfirm}
