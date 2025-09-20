@@ -232,9 +232,9 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
             </button>
             <button
               onClick={onAddRecord}
-              className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
+              className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow text-gray-900 text-2xl font-light"
             >
-              <div className="w-6 h-6 text-gray-900 text-2xl font-light">+</div>
+              +
             </button>
           </div>
         </div>

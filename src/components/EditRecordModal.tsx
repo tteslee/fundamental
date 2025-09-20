@@ -159,10 +159,10 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
               <div className="flex justify-center py-8">
                 <div className="flex flex-col items-center space-y-2">
                   <div 
-                    className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                    className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg text-white text-2xl font-light"
                     style={{ backgroundColor: getRecordTypeColor(record.type) }}
                   >
-                    <div className="text-white text-2xl font-light">+</div>
+                    +
                   </div>
                   <div className="text-sm font-medium text-gray-900">
                     {getRecordTypeLabel(record.type)}

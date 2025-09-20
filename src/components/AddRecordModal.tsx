@@ -179,10 +179,10 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
                     className="flex flex-col items-center space-y-2"
                   >
                     <div 
-                      className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow"
+                      className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow text-white text-2xl font-light"
                       style={{ backgroundColor: getRecordTypeColor(type) }}
                     >
-                      <div className="text-white text-2xl font-light">+</div>
+                      +
                     </div>
                     <div className="text-sm font-medium text-gray-900">
                       {getRecordTypeLabel(type)}
