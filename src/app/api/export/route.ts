@@ -45,6 +45,10 @@ export async function POST(request: NextRequest) {
     ]
     
     const exportRecords = records.length > 0 ? records : mockRecords
+    
+    // Debug: Log what records we're exporting
+    console.log('Exporting records:', exportRecords.length, 'records')
+    console.log('First record:', exportRecords[0])
 
     if (format === 'csv') {
       const csv = generateCSV(exportRecords)
@@ -73,12 +77,12 @@ export async function POST(request: NextRequest) {
 
 function generateCSV(records: any[]): string {
   const csvData = records.map(record => ({
-    Type: record.type,
-    'Start Time': record.startTime,
-    'End Time': record.endTime || '',
-    Duration: record.duration ? `${record.duration} minutes` : '',
-    Memo: record.memo || '',
-    'Created At': record.createdAt,
+    '유형': record.type === 'sleep' ? '수면' : record.type === 'food' ? '식사' : '약물',
+    '시작 시간': new Date(record.startTime).toLocaleString('ko-KR'),
+    '종료 시간': record.endTime ? new Date(record.endTime).toLocaleString('ko-KR') : '',
+    '지속 시간': record.duration ? `${Math.floor(record.duration / 60)}시간 ${record.duration % 60}분` : '',
+    '메모': record.memo || '',
+    '생성일': new Date(record.createdAt).toLocaleString('ko-KR'),
   }))
 
   return Papa.unparse(csvData)
@@ -89,7 +93,7 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
   const page = pdfDoc.addPage([600, 800])
   const { width, height } = page.getSize()
 
-  // Add title
+  // Add title in Korean
   const titleFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
   page.drawText('Fundamental Health Records', {
     x: 50,
@@ -109,8 +113,28 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
     color: rgb(0.5, 0.5, 0.5),
   })
 
+  // Add records count in Korean
+  page.drawText(`Total ${records.length} records`, {
+    x: 50,
+    y: height - 110,
+    size: 12,
+    font: regularFont,
+    color: rgb(0.3, 0.3, 0.3),
+  })
+
   // Add records
-  let yPosition = height - 120
+  let yPosition = height - 140
+  
+  // Helper function to get type labels
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'sleep': return 'Sleep'
+      case 'food': return 'Food'
+      case 'medication': return 'Medication'
+      default: return type
+    }
+  }
+  
   records.forEach((record, index) => {
     if (yPosition < 100) {
       // Add new page if needed
@@ -120,14 +144,38 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
 
     const currentPage = yPosition > 100 ? page : pdfDoc.getPages()[pdfDoc.getPageCount() - 1]
     
-    currentPage.drawText(`${record.type.toUpperCase()} - ${new Date(record.startTime).toLocaleString()}`, {
+    // Format time
+    const startTime = new Date(record.startTime).toISOString()
+    const endTime = record.endTime ? new Date(record.endTime).toISOString() : null
+    
+    // Record display
+    const typeLabel = getTypeLabel(record.type)
+    const timeText = endTime ? `${startTime} ~ ${endTime}` : startTime
+    const recordText = `${index + 1}. ${typeLabel} - ${timeText}`
+    
+    currentPage.drawText(recordText, {
       x: 50,
       y: yPosition,
       size: 12,
       font: regularFont,
       color: rgb(0, 0, 0),
     })
-
+    
+    // Duration for sleep records
+    if (record.duration && record.type === 'sleep') {
+      const hours = Math.floor(record.duration / 60)
+      const minutes = record.duration % 60
+      currentPage.drawText(`Duration: ${hours}h ${minutes}m`, {
+        x: 70,
+        y: yPosition - 20,
+        size: 10,
+        font: regularFont,
+        color: rgb(0.2, 0.2, 0.2),
+      })
+      yPosition -= 20
+    }
+    
+    // Memo
     if (record.memo) {
       currentPage.drawText(`Memo: ${record.memo}`, {
         x: 70,
