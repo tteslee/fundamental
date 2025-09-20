@@ -48,7 +48,8 @@ export default function ExportModal({ isOpen, onClose, onExport, isLoading }: Ex
             <button
               onClick={() => onExport('csv')}
               disabled={isLoading}
-              className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full text-white py-4 px-6 rounded-lg hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              style={{ backgroundColor: '#949CAF' }}
             >
               <div className="flex items-center justify-center space-x-3">
                 <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
@@ -62,7 +63,8 @@ export default function ExportModal({ isOpen, onClose, onExport, isLoading }: Ex
             <button
               onClick={() => onExport('pdf')}
               disabled={isLoading}
-              className="w-full bg-red-500 text-white py-4 px-6 rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full text-white py-4 px-6 rounded-lg hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              style={{ backgroundColor: '#949CAF' }}
             >
               <div className="flex items-center justify-center space-x-3">
                 <div className="w-6 h-6 bg-white rounded flex items-center justify-center">

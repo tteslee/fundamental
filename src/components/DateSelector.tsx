@@ -177,7 +177,7 @@ export default function DateSelector({ selectedDate, startTime, endTime, onDateC
         <button
           onClick={handleConfirm}
           className="px-6 py-2 rounded-full text-white font-medium transition-colors"
-          style={{ backgroundColor: getRecordTypeColor('food') }}
+          style={{ backgroundColor: getRecordTypeColor(selectedType) }}
         >
           Confirm
         </button>

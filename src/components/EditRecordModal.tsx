@@ -181,7 +181,8 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-6 py-2 rounded-full bg-red-500 text-white font-medium transition-colors hover:bg-red-600"
+                  className="px-6 py-2 rounded-full text-white font-medium transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: '#949CAF' }}
                 >
                   Delete
                 </button>

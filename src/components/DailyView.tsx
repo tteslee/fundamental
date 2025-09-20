@@ -218,13 +218,15 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
           <div className="flex items-center space-x-4">
             <button
               onClick={onAIReview}
-              className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="px-3 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
+              style={{ backgroundColor: '#949CAF' }}
             >
               AI Review
             </button>
             <button
               onClick={onExport}
-              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+              className="px-3 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
+              style={{ backgroundColor: '#949CAF' }}
             >
               Export
             </button>

@@ -204,9 +204,10 @@ export default function Home() {
             onClick={() => setViewMode('weekly')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               viewMode === 'weekly'
-                ? 'bg-gray-900 text-white'
+                ? 'text-white'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
+            style={{ backgroundColor: viewMode === 'weekly' ? '#949CAF' : 'transparent' }}
           >
             Weekly
           </button>
@@ -214,9 +215,10 @@ export default function Home() {
             onClick={() => setViewMode('daily')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               viewMode === 'daily'
-                ? 'bg-gray-900 text-white'
+                ? 'text-white'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
+            style={{ backgroundColor: viewMode === 'daily' ? '#949CAF' : 'transparent' }}
           >
             Daily
           </button>
