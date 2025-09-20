@@ -77,10 +77,11 @@ export default function Home() {
   const [isLoadingAI, setIsLoadingAI] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
 
-  const handleAddRecord = (newRecord: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleAddRecord = (newRecord: Omit<Record, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     const record: Record = {
       ...newRecord,
       id: Date.now().toString(),
+      userId: 'demo-user', // Default user ID for demo
       createdAt: new Date(),
       updatedAt: new Date(),
     }

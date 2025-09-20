@@ -4,14 +4,11 @@ import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
 export async function POST(request: NextRequest) {
   try {
-    const { format, startDate, endDate } = await request.json()
+    const { format, startDate, endDate, records = [] } = await request.json()
     
     if (!startDate || !endDate) {
       return NextResponse.json({ error: 'Start and end dates are required' }, { status: 400 })
     }
-
-    // Get records from the request body or use mock data for demo
-    const { records = [] } = await request.json().catch(() => ({}))
     
     // If no records provided, use some mock data for demo
     const mockRecords = [
@@ -47,25 +44,38 @@ export async function POST(request: NextRequest) {
     const exportRecords = records.length > 0 ? records : mockRecords
     
     // Debug: Log what records we're exporting
-    console.log('Exporting records:', exportRecords.length, 'records')
+    console.log('Raw request body records:', records.length, 'records')
+    console.log('Using records:', exportRecords.length, 'records')
     console.log('First record:', exportRecords[0])
+    console.log('Records type:', typeof records, Array.isArray(records))
+    console.log('Full request body:', JSON.stringify({ format, startDate, endDate, recordsCount: records.length }))
 
     if (format === 'csv') {
-      const csv = generateCSV(exportRecords)
-      return new NextResponse(csv, {
-        headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': 'attachment; filename="fundamental-records.csv"',
-        },
-      })
+      try {
+        const csv = generateCSV(exportRecords)
+        return new NextResponse(csv, {
+          headers: {
+            'Content-Type': 'text/csv',
+            'Content-Disposition': 'attachment; filename="fundamental-records.csv"',
+          },
+        })
+      } catch (error) {
+        console.error('CSV generation error:', error)
+        return NextResponse.json({ error: 'CSV generation failed' }, { status: 500 })
+      }
     } else if (format === 'pdf') {
-      const pdfBytes = await generatePDF(exportRecords, startDate, endDate)
-      return new NextResponse(pdfBytes, {
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': 'attachment; filename="fundamental-records.pdf"',
-        },
-      })
+      try {
+        const pdfBytes = await generatePDF(exportRecords, startDate, endDate)
+        return new NextResponse(pdfBytes, {
+          headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment; filename="fundamental-records.pdf"',
+          },
+        })
+      } catch (error) {
+        console.error('PDF generation error:', error)
+        return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ error: 'Invalid format' }, { status: 400 })
