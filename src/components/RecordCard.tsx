@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Record } from '@/types'
 import { formatTime, getRecordTypeColor, getRecordTypeLabel } from '@/lib/utils'
-import { ChevronLeft, Edit3, Trash2 } from 'lucide-react'
+import { Edit3, Trash2 } from 'lucide-react'
 
 interface RecordCardProps {
   record: Record
@@ -88,7 +88,9 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
   return (
     <div className="relative overflow-hidden">
       {/* Swipe actions */}
-      <div className="absolute inset-0 flex">
+      <div className={`absolute inset-0 flex transition-transform duration-300 ${
+        isSwiped ? 'translate-x-0' : '-translate-x-full'
+      }`}>
         {/* Edit button */}
         <div className="w-20 bg-blue-500 flex items-center justify-center">
           <button
@@ -144,8 +146,6 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
           )}
         </div>
         
-        {/* Arrow icon */}
-        <ChevronLeft className="w-5 h-5 text-gray-400" />
       </div>
     </div>
   )
