@@ -92,20 +92,20 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
         isSwiped ? 'translate-x-0' : '-translate-x-full'
       }`}>
         {/* Edit button */}
-        <div className="w-20 bg-blue-500 flex items-center justify-center">
+        <div className="w-20 flex items-center justify-center" style={{ backgroundColor: '#949CAF' }}>
           <button
             onClick={handleEdit}
-            className="p-2 text-white hover:bg-blue-600 transition-colors"
+            className="p-2 text-white hover:opacity-80 transition-opacity"
           >
             <Edit3 className="w-5 h-5" />
           </button>
         </div>
         
         {/* Delete button */}
-        <div className="w-20 bg-red-500 flex items-center justify-center">
+        <div className="w-20 flex items-center justify-center" style={{ backgroundColor: '#949CAF' }}>
           <button
             onClick={handleDelete}
-            className="p-2 text-white hover:bg-red-600 transition-colors"
+            className="p-2 text-white hover:opacity-80 transition-opacity"
           >
             <Trash2 className="w-5 h-5" />
           </button>
