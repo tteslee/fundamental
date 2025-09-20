@@ -1,87 +1,225 @@
-# Fundamental App
+# Fundamental - Daily Habit Tracking App
 
-Empowering people to set core habits for a healthier life.
+A modern, mobile-first web application for tracking core daily habits including sleep, meals, and medication. Built with Next.js 15, TypeScript, and Tailwind CSS.
 
-## Overview
+## 🎯 Features
 
-Fundamental is a health tracking application that helps users record and visualize their daily habits including sleep, food intake, and medication. The app provides insights into patterns that impact well-being and offers AI-powered analysis of personal records.
+### Core Functionality
+- **Sleep Tracking**: Record sleep duration with start and end times
+- **Food Logging**: Track meal times and add memos
+- **Medication Reminders**: Log medication intake with timestamps
+- **Timeline Views**: Weekly and daily visualizations of your habits
+- **AI Review**: Get insights and recommendations (mock implementation)
+- **Data Export**: Export your data as CSV or PDF (mock implementation)
 
-## Features
+### User Experience
+- **Korean-First Design**: Optimized for Korean users with English technical terms
+- **Mobile-Optimized**: Touch-friendly interface with swipe gestures
+- **Modern UI**: Clean, minimalist design inspired by 20th-century modern graphics
+- **Responsive**: Works seamlessly on desktop and mobile devices
+- **Real-time Updates**: Instant feedback and smooth animations
 
-### MVP Features
-- **Korean-first UI** with English terms for sleep, food, and medication
-- **User profile and registration** (private space for records)
-- **Record tracking** for sleep, food, and medication with time/duration
-- **Visualization** of records in daily and weekly views
-- **Edit/delete functionality** for existing records
-- **LLM integration** for AI-powered analysis and advice
-- **Export functionality** (CSV and PDF)
+## 🚀 Tech Stack
 
-### UI Components
-- **Weekly View**: Main home screen with vertical timeline visualization
-- **Add Record Modal**: Bottom sheet for adding new records
-- **Time Selector**: Horizontal time ruler for precise time selection
-- **Date Selector**: Month and day picker with scrollable selectors
-- **Memo Input**: Text input for additional notes
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui + Radix** - Accessible UI components
+- **React Query** - Data fetching and caching
+- **React Hook Form + Zod** - Form handling and validation
 
-## Tech Stack
+### Backend
+- **NextAuth.js** - Authentication
+- **Prisma ORM** - Database management
+- **PostgreSQL** - Primary database (via Supabase)
+- **Supabase Storage** - File storage
+- **OpenAI API** - AI-powered insights
 
-- **Framework**: Next.js 15 (App Router) + TypeScript
-- **UI**: Tailwind CSS + shadcn/ui + Radix primitives
-- **State**: Server Components + React Query
-- **Forms**: React Hook Form + Zod validation
-- **Auth**: NextAuth.js (Credentials + OAuth)
-- **Database**: PostgreSQL (Supabase) + Prisma ORM
-- **LLM**: OpenAI API
-- **Exports**: papaparse (CSV), pdf-lib (PDF)
-- **i18n**: next-intl (Korean-first)
+### Development
+- **next-intl** - Internationalization
+- **Sentry** - Error monitoring and logging
+- **ESLint + Prettier** - Code quality and formatting
 
-## Getting Started
+## 📱 User Interface
 
-1. Install dependencies:
+### Weekly View (Default)
+- 7-day timeline with hourly grid
+- Visual representation of sleep, food, and medication records
+- Average sleep time calculation
+- Quick access to AI review and export
+
+### Daily View
+- Detailed daily timeline
+- Individual record management
+- Swipe gestures for edit/delete actions
+
+### Record Management
+- **Add Records**: Multi-step modal with time, date, and memo selection
+- **Edit Records**: Full editing capability with time preservation
+- **Delete Records**: Swipe-to-delete functionality
+- **Time Selection**: 24-hour range with 15-minute intervals
+- **Date Selection**: Korean calendar with month/day pickers
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- PostgreSQL database (or Supabase account)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd fundamental-app
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Run the development server:
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Configure the following variables:
+   ```env
+   DATABASE_URL="postgresql://username:password@localhost:5432/fundamental"
+   NEXTAUTH_SECRET="your-secret-key"
+   NEXTAUTH_URL="http://localhost:3000"
+   OPENAI_API_KEY="your-openai-key"
+   SUPABASE_URL="your-supabase-url"
+   SUPABASE_ANON_KEY="your-supabase-key"
+   ```
+
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Run the development server**
    ```bash
    npm run dev
    ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## Color Scheme
-
-- **Sleep**: #565DFF (Blue)
-- **Food**: #F3411A (Red)
-- **Medication**: #0A9D3C (Green)
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
-├── app/                 # Next.js app directory
-├── components/          # React components
-├── lib/                # Utility functions
-├── types/              # TypeScript type definitions
-└── hooks/              # Custom React hooks
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   └── globals.css        # Global styles
+├── components/            # React components
+│   ├── WeeklyView.tsx     # Weekly timeline view
+│   ├── DailyView.tsx      # Daily timeline view
+│   ├── AddRecordModal.tsx # Add record flow
+│   ├── EditRecordModal.tsx # Edit record flow
+│   ├── TimeSelector.tsx   # Time selection component
+│   ├── DateSelector.tsx   # Date selection component
+│   └── RecordCard.tsx     # Individual record display
+├── lib/                   # Utility functions
+│   ├── auth.ts           # NextAuth configuration
+│   ├── db.ts             # Database utilities
+│   ├── prisma.ts         # Prisma client
+│   └── utils.ts          # Helper functions
+├── types/                 # TypeScript type definitions
+└── messages/              # Internationalization files
 ```
 
-## Development Status
+## 🎨 Design System
 
-This is a working prototype/MVP with the core UI components implemented. The application currently uses mock data and includes:
+### Colors
+- **Sleep**: Purple (#8B5CF6)
+- **Food**: Pink (#EC4899) 
+- **Medication**: Green (#10B981)
 
-- ✅ Weekly timeline visualization
-- ✅ Add record modal with multi-step flow
-- ✅ Time and date selection
-- ✅ Memo input functionality
-- ✅ Basic record management
+### Typography
+- **Font**: Inter (Google Fonts)
+- **Korean**: Optimized for Korean text display
+- **Hierarchy**: Clear visual hierarchy with consistent spacing
 
-## Next Steps
+### Components
+- **Modals**: Bottom sheet style with rounded corners
+- **Buttons**: Rounded with hover states
+- **Timeline**: Clean grid with subtle lines
+- **Records**: Color-coded with consistent sizing
 
-- [ ] Database setup with Prisma and Supabase
-- [ ] Authentication implementation
-- [ ] AI review feature
-- [ ] Export functionality
-- [ ] Edit/delete record functionality
-- [ ] Internationalization setup
+## 🔧 Development
+
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript checks
+
+### Code Quality
+- **TypeScript**: Strict type checking enabled
+- **ESLint**: Configured for Next.js and React
+- **Prettier**: Consistent code formatting
+- **Husky**: Pre-commit hooks for quality checks
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables
+3. Deploy automatically on push to main branch
+
+### Other Platforms
+- **Netlify**: Static site generation
+- **Railway**: Full-stack deployment
+- **DigitalOcean**: VPS deployment
+
+## 📊 Database Schema
+
+### Users
+- `id` - Unique identifier
+- `email` - User email
+- `name` - Display name
+- `createdAt` - Account creation date
+
+### Records
+- `id` - Unique identifier
+- `type` - Record type (sleep, food, medication)
+- `startTime` - Start timestamp
+- `endTime` - End timestamp (for sleep)
+- `duration` - Duration in minutes
+- `memo` - Optional notes
+- `userId` - Foreign key to user
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Design inspiration from 20th-century modern graphic design
+- New York City subway design system
+- Korean user experience best practices
+- Next.js and React community
+
+## 📞 Support
+
+For support, email support@fundamental-app.com or create an issue in the repository.
+
+---
+
+**Fundamental** - Empowering people to set core habits for a healthier life. 🌟
