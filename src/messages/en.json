@@ -1,0 +1,43 @@
+{
+  "common": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirm": "Confirm",
+    "back": "Back",
+    "now": "Now",
+    "today": "Today",
+    "memo": "Memo",
+    "time": "Time",
+    "date": "Date"
+  },
+  "records": {
+    "sleep": "Sleep",
+    "food": "Food",
+    "medicine": "Medicine",
+    "addRecord": "Add Record",
+    "editRecord": "Edit Record",
+    "deleteRecord": "Delete Record",
+    "noRecords": "No records for this day",
+    "addFirstRecord": "Tap the + button to add your first record"
+  },
+  "views": {
+    "weekly": "Weekly",
+    "daily": "Daily",
+    "averageSleepTime": "Average sleep time in 7 days"
+  },
+  "aiReview": {
+    "title": "AI Review",
+    "overallReview": "Overall Review",
+    "thingsToImprove": "Things to Improve",
+    "highlightedWins": "Highlighted Wins",
+    "lookingAhead": "Looking Ahead"
+  },
+  "export": {
+    "title": "Export Data",
+    "csv": "Download CSV",
+    "pdf": "Download PDF"
+  }
+}

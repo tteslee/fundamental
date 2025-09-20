@@ -1,0 +1,43 @@
+{
+  "common": {
+    "add": "추가",
+    "edit": "편집",
+    "delete": "삭제",
+    "cancel": "취소",
+    "save": "저장",
+    "confirm": "확인",
+    "back": "뒤로",
+    "now": "지금",
+    "today": "오늘",
+    "memo": "메모",
+    "time": "시간",
+    "date": "날짜"
+  },
+  "records": {
+    "sleep": "Sleep",
+    "food": "Food", 
+    "medicine": "Medicine",
+    "addRecord": "기록 추가",
+    "editRecord": "기록 편집",
+    "deleteRecord": "기록 삭제",
+    "noRecords": "이 날의 기록이 없습니다",
+    "addFirstRecord": "+ 버튼을 눌러 첫 번째 기록을 추가하세요"
+  },
+  "views": {
+    "weekly": "주간",
+    "daily": "일간",
+    "averageSleepTime": "7일 평균 수면 시간"
+  },
+  "aiReview": {
+    "title": "AI 분석",
+    "overallReview": "전체 리뷰",
+    "thingsToImprove": "개선할 점",
+    "highlightedWins": "주요 성과",
+    "lookingAhead": "앞으로의 계획"
+  },
+  "export": {
+    "title": "데이터 내보내기",
+    "csv": "CSV 다운로드",
+    "pdf": "PDF 다운로드"
+  }
+}
