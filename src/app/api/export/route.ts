@@ -10,11 +10,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Start and end dates are required' }, { status: 400 })
     }
 
-    // For demo purposes, use mock data
-    const records = []
+    // Get records from the request body or use mock data for demo
+    const { records = [] } = await request.json().catch(() => ({}))
+    
+    // If no records provided, use some mock data for demo
+    const mockRecords = [
+      {
+        id: '1',
+        type: 'sleep',
+        startTime: new Date('2024-01-15T23:00:00Z'),
+        endTime: new Date('2024-01-16T07:00:00Z'),
+        duration: 480,
+        memo: 'Good sleep',
+        createdAt: new Date('2024-01-15T23:00:00Z'),
+      },
+      {
+        id: '2',
+        type: 'food',
+        startTime: new Date('2024-01-16T08:00:00Z'),
+        endTime: null,
+        duration: null,
+        memo: 'Breakfast - oatmeal',
+        createdAt: new Date('2024-01-16T08:00:00Z'),
+      },
+      {
+        id: '3',
+        type: 'medication',
+        startTime: new Date('2024-01-16T09:00:00Z'),
+        endTime: null,
+        duration: null,
+        memo: 'Vitamin D',
+        createdAt: new Date('2024-01-16T09:00:00Z'),
+      },
+    ]
+    
+    const exportRecords = records.length > 0 ? records : mockRecords
 
     if (format === 'csv') {
-      const csv = generateCSV(records)
+      const csv = generateCSV(exportRecords)
       return new NextResponse(csv, {
         headers: {
           'Content-Type': 'text/csv',
@@ -22,7 +55,7 @@ export async function POST(request: NextRequest) {
         },
       })
     } else if (format === 'pdf') {
-      const pdfBytes = await generatePDF(records, startDate, endDate)
+      const pdfBytes = await generatePDF(exportRecords, startDate, endDate)
       return new NextResponse(pdfBytes, {
         headers: {
           'Content-Type': 'application/pdf',

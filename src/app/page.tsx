@@ -153,36 +153,43 @@ export default function Home() {
     setIsExporting(true)
     
     try {
-      // Mock export for demo
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Calculate date range for export (last 30 days)
+      const endDate = new Date()
+      const startDate = new Date()
+      startDate.setDate(startDate.getDate() - 30)
       
-      if (format === 'csv') {
-        const csvContent = records.map(record => ({
-          Type: record.type,
-          'Start Time': record.startTime.toISOString(),
-          'End Time': record.endTime?.toISOString() || '',
-          Duration: record.duration ? `${record.duration} minutes` : '',
-          Memo: record.memo || '',
-        }))
-        
-        const csv = Papa.unparse(csvContent)
-        const blob = new Blob([csv], { type: 'text/csv' })
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `fundamental-records.${format}`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
-      } else {
-        // For PDF, we'll just show a success message
-        alert('PDF export would be implemented here')
+      const response = await fetch('/api/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          format,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          records: records, // Send actual records
+        }),
+      })
+      
+      if (!response.ok) {
+        throw new Error('Export failed')
       }
+      
+      // Create blob and download
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `fundamental-records.${format}`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
       
       setIsExportModalOpen(false)
     } catch (error) {
       console.error('Error exporting data:', error)
+      alert('Export failed. Please try again.')
     } finally {
       setIsExporting(false)
     }
