@@ -224,6 +224,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
           setEditingRecord(null)
         }}
         onUpdateRecord={handleUpdateRecord}
+        onDeleteRecord={onDeleteRecord}
       />
     </div>
   )

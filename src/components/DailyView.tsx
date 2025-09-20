@@ -247,6 +247,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
           setEditingRecord(null)
         }}
         onUpdateRecord={handleUpdateRecord}
+        onDeleteRecord={onDeleteRecord}
       />
     </div>
   )

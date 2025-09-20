@@ -12,9 +12,10 @@ interface EditRecordModalProps {
   record: Record | null
   onClose: () => void
   onUpdateRecord: (id: string, record: Partial<Record>) => void
+  onDeleteRecord: (id: string) => void
 }
 
-export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecord }: EditRecordModalProps) {
+export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecord, onDeleteRecord }: EditRecordModalProps) {
   const [selectedType, setSelectedType] = useState<RecordType | null>(null)
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState<Date | null>(null)
@@ -81,6 +82,13 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
     }
     
     handleClose()
+  }
+
+  const handleDelete = () => {
+    if (record) {
+      onDeleteRecord(record.id)
+      handleClose()
+    }
   }
 
   const handleClose = () => {
@@ -163,13 +171,19 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
               </div>
 
               {/* Action buttons */}
-              <div className="flex justify-center space-x-8">
+              <div className="flex justify-center space-x-4">
                 <button
                   onClick={() => setShowTimeSelector(true)}
                   className="px-6 py-2 rounded-full text-white font-medium transition-colors"
                   style={{ backgroundColor: getRecordTypeColor(record.type) }}
                 >
-                  Edit Time
+                  Edit
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-6 py-2 rounded-full bg-red-500 text-white font-medium transition-colors hover:bg-red-600"
+                >
+                  Delete
                 </button>
               </div>
             </>
