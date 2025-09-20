@@ -105,14 +105,29 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
     onClose()
   }
 
+  // Force close function for emergency cases
+  const forceClose = () => {
+    setSelectedType(null)
+    setStartTime(new Date())
+    setEndTime(null)
+    setSelectedDate(new Date())
+    setMemo('')
+    setStartTimeComponents({ hours: 0, minutes: 0 })
+    setEndTimeComponents(null)
+    setShowTimeSelector(false)
+    setShowDateSelector(false)
+    setShowMemoInput(false)
+    onClose()
+  }
+
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center" key={`modal-${isOpen}`}>
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={handleClose}
+        onClick={forceClose}
       />
       
       {/* Modal */}
@@ -124,7 +139,7 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
 
         {/* Cancel button */}
         <button
-          onClick={handleClose}
+          onClick={forceClose}
           className="absolute top-4 left-4 text-gray-400 text-sm"
         >
           cancel
@@ -178,37 +193,46 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
             </>
           )}
 
-          {selectedType && showTimeSelector && !showDateSelector && !showMemoInput && (
-            <TimeSelector
-              selectedType={selectedType}
-              startTime={startTime}
-              endTime={endTime}
-              onTimeConfirm={handleTimeConfirm}
-              onBack={() => setSelectedType(null)}
-            />
-          )}
+            {selectedType && showTimeSelector && !showDateSelector && !showMemoInput && (
+              <TimeSelector
+                selectedType={selectedType}
+                startTime={startTime}
+                endTime={endTime}
+                onTimeConfirm={handleTimeConfirm}
+                onBack={() => {
+                  setSelectedType(null)
+                  setShowTimeSelector(false)
+                }}
+              />
+            )}
 
-          {selectedType && showDateSelector && !showTimeSelector && !showMemoInput && (
-            <DateSelector
-              selectedDate={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
-              startTime={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
-              endTime={endTimeComponents ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endTimeComponents.hours, endTimeComponents.minutes) : null}
-              onDateConfirm={handleDateConfirm}
-              onBack={() => setShowTimeSelector(true)}
-            />
-          )}
+            {selectedType && showDateSelector && !showTimeSelector && !showMemoInput && (
+              <DateSelector
+                selectedDate={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
+                startTime={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
+                endTime={endTimeComponents ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endTimeComponents.hours, endTimeComponents.minutes) : null}
+                onDateConfirm={handleDateConfirm}
+                onBack={() => {
+                  setShowDateSelector(false)
+                  setShowTimeSelector(true)
+                }}
+              />
+            )}
 
-          {selectedType && showMemoInput && !showTimeSelector && !showDateSelector && (
-            <MemoInput
-              selectedType={selectedType}
-              memo={memo}
-              startTime={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
-              endTime={endTimeComponents ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endTimeComponents.hours, endTimeComponents.minutes) : null}
-              selectedDate={selectedDate}
-              onMemoConfirm={handleMemoConfirm}
-              onBack={() => setShowDateSelector(true)}
-            />
-          )}
+            {selectedType && showMemoInput && !showTimeSelector && !showDateSelector && (
+              <MemoInput
+                selectedType={selectedType}
+                memo={memo}
+                startTime={new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), startTimeComponents.hours, startTimeComponents.minutes)}
+                endTime={endTimeComponents ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), endTimeComponents.hours, endTimeComponents.minutes) : null}
+                selectedDate={selectedDate}
+                onMemoConfirm={handleMemoConfirm}
+                onBack={() => {
+                  setShowMemoInput(false)
+                  setShowDateSelector(true)
+                }}
+              />
+            )}
         </div>
       </div>
     </div>
