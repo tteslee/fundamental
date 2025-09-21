@@ -156,11 +156,11 @@ export default function Home() {
       } else {
         const errorText = await response.text()
         console.error('Failed to delete record:', response.status, errorText)
-        alert('Failed to delete record. Please try again.')
+        alert('기록 삭제에 실패했습니다. 다시 시도해주세요.')
       }
     } catch (error) {
       console.error('Error deleting record:', error)
-      alert('Error deleting record. Please try again.')
+      alert('기록 삭제 중 오류가 발생했습니다. 다시 시도해주세요.')
     }
   }
 
@@ -280,7 +280,7 @@ export default function Home() {
       await performExport(format, serializedRecords, startDate, endDate)
     } catch (error) {
       console.error('Error exporting data:', error)
-      alert('Export failed. Please try again.')
+      alert('내보내기에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsExporting(false)
     }
@@ -336,7 +336,7 @@ export default function Home() {
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your records...</p>
+          <p className="mt-4 text-gray-600">기록을 불러오는 중...</p>
         </div>
       </main>
     )
@@ -347,27 +347,28 @@ export default function Home() {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-gray-600">로그인 페이지로 이동 중...</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Header with user info and controls */}
-      <div className="fixed top-4 right-4 z-40 flex items-center gap-4">
+    <div className="min-h-screen bg-gray-100 flex justify-center">
+      <main className="w-full max-w-md bg-white min-h-screen relative">
+        {/* Header with user info and controls */}
+        <div className="fixed top-4 right-4 z-40 flex items-center gap-4">
         {/* User info and logout */}
         <div className="bg-white rounded-lg shadow-lg p-3 flex items-center gap-3">
           <div className="text-sm">
             <p className="font-medium text-gray-900">{user?.user_metadata?.name || user?.email}</p>
-            <p className="text-gray-500 text-xs">Welcome back!</p>
+            <p className="text-gray-500 text-xs">다시 오신 것을 환영합니다!</p>
           </div>
           <button
             onClick={() => signOut()}
             className="px-3 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
           >
-            Logout
+            로그아웃
           </button>
         </div>
 
@@ -382,7 +383,7 @@ export default function Home() {
             }`}
             style={{ backgroundColor: viewMode === 'weekly' ? '#949CAF' : 'transparent' }}
           >
-            Weekly
+            주간
           </button>
           <button
             onClick={() => setViewMode('daily')}
@@ -393,7 +394,7 @@ export default function Home() {
             }`}
             style={{ backgroundColor: viewMode === 'daily' ? '#949CAF' : 'transparent' }}
           >
-            Daily
+            일간
           </button>
         </div>
       </div>
@@ -441,6 +442,7 @@ export default function Home() {
         onExport={handleExport}
         isLoading={isExporting}
       />
-    </main>
+      </main>
+    </div>
   )
 }

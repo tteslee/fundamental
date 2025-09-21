@@ -145,8 +145,8 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
         <div className="flex-1 p-6 space-y-4">
           {dayRecords.length === 0 ? (
             <div className="text-center text-gray-500 mt-8">
-              <div className="text-lg mb-2">No records for this day</div>
-              <div className="text-sm">Tap the + button to add your first record</div>
+              <div className="text-lg mb-2">이 날의 기록이 없습니다</div>
+              <div className="text-sm">+ 버튼을 눌러 첫 번째 기록을 추가하세요</div>
             </div>
           ) : (
             dayRecords.map((record) => (
@@ -211,7 +211,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
       <div className="bg-gray-900 text-white px-6 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm text-gray-300">Average sleep time in 7 days</div>
+            <div className="text-sm text-gray-300">7일 평균 수면 시간</div>
             <div className="text-2xl font-bold">{averageSleepTime}</div>
           </div>
           
@@ -221,14 +221,14 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
               className="px-3 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
               style={{ backgroundColor: '#949CAF' }}
             >
-              AI Review
+              AI 분석
             </button>
             <button
               onClick={onExport}
               className="px-3 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
               style={{ backgroundColor: '#949CAF' }}
             >
-              Export
+              내보내기
             </button>
             <button
               onClick={() => onAddRecord(currentDate)}

@@ -205,7 +205,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       {/* Bottom section with stats and add button */}
       <div className="bg-gray-900 text-white px-6 py-6 rounded-t-3xl">
         <div className="text-center mb-6">
-          <div className="text-sm text-gray-300 mb-1">Average sleep time in 7 days</div>
+          <div className="text-sm text-gray-300 mb-1">7일 평균 수면 시간</div>
           <div className="text-2xl font-bold">{averageSleepTime}</div>
         </div>
         
@@ -216,14 +216,14 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
             className="px-4 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
             style={{ backgroundColor: '#949CAF' }}
           >
-            AI Review
+            AI 분석
           </button>
           <button
             onClick={onExport}
             className="px-4 py-2 text-white rounded-lg hover:opacity-80 transition-opacity text-sm"
             style={{ backgroundColor: '#949CAF' }}
           >
-            Export
+            내보내기
           </button>
         </div>
         

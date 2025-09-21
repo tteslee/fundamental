@@ -111,7 +111,7 @@ export default function SignIn() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Fundamental</h1>
-          <p className="text-gray-600 mt-2">Track your daily habits for a healthier life</p>
+          <p className="text-gray-600 mt-2">건강한 삶을 위한 일상 습관 추적</p>
         </div>
 
         {/* Toggle between Login and Register */}
@@ -125,7 +125,7 @@ export default function SignIn() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Sign In
+            로그인
           </button>
           <button
             type="button"
@@ -136,7 +136,7 @@ export default function SignIn() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Create Account
+            계정 만들기
           </button>
         </div>
 
@@ -158,7 +158,7 @@ export default function SignIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="your@email.com"
+              placeholder="이메일을 입력하세요"
             />
           </div>
 
@@ -173,7 +173,7 @@ export default function SignIn() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Your name"
+                placeholder="이름을 입력하세요"
               />
             </div>
           )}
@@ -189,7 +189,7 @@ export default function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your password"
+              placeholder="비밀번호를 입력하세요"
             />
           </div>
 
@@ -199,8 +199,8 @@ export default function SignIn() {
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
             {isLoading 
-              ? (isRegister ? 'Creating account...' : 'Signing in...') 
-              : (isRegister ? 'Create Account' : 'Sign In')
+              ? (isRegister ? '계정 생성 중...' : '로그인 중...') 
+              : (isRegister ? '계정 만들기' : '로그인')
             }
           </button>
         </form>
@@ -208,8 +208,8 @@ export default function SignIn() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             {isRegister 
-              ? 'Already have an account? Sign in to access your data.'
-              : "Don't have an account? Create one to start tracking your habits."
+              ? '이미 계정이 있으신가요? 로그인하여 데이터에 접근하세요.'
+              : "계정이 없으신가요? 습관 추적을 시작하려면 계정을 만드세요."
             }
           </p>
         </div>
