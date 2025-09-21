@@ -111,7 +111,7 @@ export default function SignIn() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Fundamental</h1>
-          <p className="text-gray-600 mt-2">건강한 삶을 위한 일상 습관 추적</p>
+          <p className="text-gray-600 mt-2">건강한 삶을 위한 일상 기록</p>
         </div>
 
         {/* Toggle between Login and Register */}
@@ -208,8 +208,8 @@ export default function SignIn() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             {isRegister 
-              ? '이미 계정이 있으신가요? 로그인하여 데이터에 접근하세요.'
-              : "계정이 없으신가요? 습관 추적을 시작하려면 계정을 만드세요."
+              ? '이미 계정이 있으신가요? 로그인하세요.'
+              : "계정이 없으신가요? 습관 기록을 시작하려면 계정을 만드세요."
             }
           </p>
         </div>

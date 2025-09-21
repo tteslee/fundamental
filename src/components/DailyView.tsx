@@ -112,7 +112,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header with date and navigation */}
-      <div className="bg-gray-900 text-white px-6 pt-12 pb-4">
+      <div className="bg-gray-900 text-white px-6 pt-16 pb-4">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigateDay('prev')}

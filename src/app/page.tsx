@@ -357,7 +357,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 flex justify-center">
       <main className="w-full max-w-md bg-white min-h-screen relative">
         {/* Header with user info and controls */}
-        <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
+        <div className="fixed top-2 right-2 z-40 flex items-center gap-2">
         {/* User info and logout */}
         <div className="bg-white rounded-lg shadow-lg p-2 flex items-center gap-2">
           <div className="text-xs">

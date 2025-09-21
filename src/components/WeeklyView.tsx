@@ -111,7 +111,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
   return (
     <div className="h-screen flex flex-col">
       {/* Header with current date */}
-      <div className="px-6 pt-12 pb-4">
+      <div className="px-6 pt-16 pb-4">
         <div className="text-3xl font-bold text-gray-900">
           {formatDate(currentDate).split('.')[1]}월 {formatDate(currentDate).split('.')[2]}일
         </div>
