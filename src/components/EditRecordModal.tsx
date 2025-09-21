@@ -27,7 +27,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
 
   useEffect(() => {
     if (record) {
-      setSelectedType(record.type)
+      setSelectedType(record.type as RecordType)
       setStartTime(new Date(record.startTime))
       setEndTime(record.endTime ? new Date(record.endTime) : null)
       setSelectedDate(new Date(record.startTime))
@@ -160,12 +160,12 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
                 <div className="flex flex-col items-center space-y-2">
                   <div 
                     className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg text-white text-2xl font-light"
-                    style={{ backgroundColor: getRecordTypeColor(record.type) }}
+                    style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
                   >
                     +
                   </div>
                   <div className="text-sm font-medium text-gray-900">
-                    {getRecordTypeLabel(record.type)}
+                    {getRecordTypeLabel(record.type as any)}
                   </div>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
                 <button
                   onClick={() => setShowTimeSelector(true)}
                   className="px-6 py-2 rounded-full text-white font-medium transition-colors"
-                  style={{ backgroundColor: getRecordTypeColor(record.type) }}
+                  style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
                 >
                   Edit
                 </button>
@@ -192,7 +192,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
 
           {showTimeSelector && (
             <TimeSelector
-              selectedType={record.type}
+              selectedType={record.type as RecordType}
               startTime={startTime}
               endTime={endTime}
               onTimeConfirm={handleTimeConfirm}
@@ -203,6 +203,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
           {showDateSelector && (
             <DateSelector
               selectedDate={selectedDate}
+              selectedType={record.type as RecordType}
               startTime={startTime}
               endTime={endTime}
               onDateConfirm={handleDateConfirm}
@@ -212,7 +213,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
 
           {showMemoInput && (
             <MemoInput
-              selectedType={record.type}
+              selectedType={record.type as RecordType}
               memo={memo}
               startTime={startTime}
               endTime={endTime}

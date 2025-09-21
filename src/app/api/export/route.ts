@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Filter out 2024 mock data - only export 2025+ real data
-    const exportRecords = records.filter(record => {
+    const exportRecords = records.filter((record: any) => {
       const recordDate = new Date(record.startTime)
       return recordDate.getFullYear() >= 2025
     })
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     } else if (format === 'pdf') {
       try {
         const pdfBytes = await generatePDF(exportRecords, startDate, endDate)
-        return new NextResponse(pdfBytes, {
+        return new NextResponse(pdfBytes as any, {
           headers: {
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename="fundamental-records.pdf"',

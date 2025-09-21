@@ -178,7 +178,7 @@ export default function Home() {
             console.log('Fetched records from API:', data.length, 'records')
             setRecords(data)
             // Use the fetched data for export
-            const serializedRecords = data.map(record => ({
+            const serializedRecords = data.map((record: any) => ({
               ...record,
               startTime: record.startTime instanceof Date ? record.startTime.toISOString() : record.startTime,
               endTime: record.endTime ? (record.endTime instanceof Date ? record.endTime.toISOString() : record.endTime) : null,

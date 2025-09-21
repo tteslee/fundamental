@@ -79,7 +79,7 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
       >
         <div 
           className="w-3 h-full rounded-full mx-auto opacity-80 hover:opacity-100 transition-opacity"
-          style={{ backgroundColor: getRecordTypeColor(record.type) }}
+          style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
         />
       </div>
     )
@@ -125,14 +125,14 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
         {/* Color dot */}
         <div
           className="w-3 h-3 rounded-full flex-shrink-0"
-          style={{ backgroundColor: getRecordTypeColor(record.type) }}
+          style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
         />
         
         {/* Record content */}
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <div className="font-medium text-gray-900">
-              {getRecordTypeLabel(record.type)}
+              {getRecordTypeLabel(record.type as any)}
             </div>
             <div className="text-sm text-gray-500">
               {formatTime(new Date(record.startTime))}

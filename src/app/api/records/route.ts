@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     // For demo purposes, use demo user ID if no session
-    const userId = session?.user?.id || 'cmfs3fans0000me40mimwsht2'
+    const userId = (session?.user as any)?.id || 'cmfs3fans0000me40mimwsht2'
     
     console.log('Fetching records for user:', userId)
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     // For demo purposes, use demo user ID if no session
-    const userId = session?.user?.id || 'cmfs3fans0000me40mimwsht2'
+    const userId = (session?.user as any)?.id || 'cmfs3fans0000me40mimwsht2'
     
     console.log('Creating record for user:', userId)
 

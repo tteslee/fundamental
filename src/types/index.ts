@@ -6,9 +6,9 @@ export interface Record {
   id: string
   type: string // sleep, food, medication
   startTime: Date
-  endTime?: Date
-  duration?: number // in minutes
-  memo?: string
+  endTime?: Date | null
+  duration?: number | null // in minutes
+  memo?: string | null
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -17,7 +17,7 @@ export interface Record {
 export interface User {
   id: string
   email: string
-  name?: string
+  name?: string | null
   createdAt: Date
   updatedAt: Date
 }

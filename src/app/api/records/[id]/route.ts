@@ -5,17 +5,18 @@ import { updateRecord, deleteRecord } from '@/lib/db'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user?.id) {
+    if (!session?.user || !(session.user as any).id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
-    const record = await updateRecord(params.id, body)
+    const record = await updateRecord(id, body)
 
     return NextResponse.json(record)
   } catch (error) {
@@ -26,16 +27,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user?.id) {
+    if (!session?.user || !(session.user as any).id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteRecord(params.id)
+    const { id } = await params
+    await deleteRecord(id)
 
     return NextResponse.json({ success: true })
   } catch (error) {
