@@ -162,7 +162,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
         </div>
 
         {/* Timeline */}
-        <div className="w-32 p-6">
+        <div className="w-32 p-6 pb-20">
           <div className="relative h-full">
             {/* Day indicator */}
             <div className="text-center text-sm font-medium text-gray-600 mb-4">
@@ -172,7 +172,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
             {/* Timeline bar */}
             <div className="relative h-full">
               {/* Hour labels */}
-              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400">
+              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 pb-16">
                 {hourLabels.map((label, index) => (
                   <div key={index} className="relative">
                     <div className="absolute -left-2 top-0 w-1 h-px bg-gray-200"></div>

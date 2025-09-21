@@ -141,7 +141,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       <div className="flex-1 px-6 pb-4">
         <div className="relative h-full">
           {/* Time labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400">
+          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 pb-16">
             {hourLabels.map((label, index) => (
               <div key={index} className="relative">
                 <div className="absolute -left-2 top-0 w-1 h-px bg-gray-200"></div>
