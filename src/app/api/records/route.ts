@@ -43,7 +43,19 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('Fetched records for user:', user.id, 'Count:', records?.length || 0)
-    return NextResponse.json(records || [])
+    
+    // Transform the data to match frontend expectations
+    const transformedRecords = (records || []).map(record => ({
+      ...record,
+      startTime: record.start_time,
+      endTime: record.end_time,
+      userId: record.user_id,
+      createdAt: record.created_at,
+      updatedAt: record.updated_at
+    }))
+    
+    console.log('Transformed records:', transformedRecords)
+    return NextResponse.json(transformedRecords)
   } catch (error) {
     console.error('Error fetching records:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -112,7 +124,19 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Successfully created record:', record)
-    return NextResponse.json(record)
+    
+    // Transform the data to match frontend expectations
+    const transformedRecord = {
+      ...record,
+      startTime: record.start_time,
+      endTime: record.end_time,
+      userId: record.user_id,
+      createdAt: record.created_at,
+      updatedAt: record.updated_at
+    }
+    
+    console.log('Transformed created record:', transformedRecord)
+    return NextResponse.json(transformedRecord)
   } catch (error) {
     console.error('Error creating record:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
