@@ -1,10 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 import { createRecord, getRecordsByUser } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    // Get the Authorization header
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader) {
+      return NextResponse.json({ error: 'No authorization header' }, { status: 401 })
+    }
+
+    // Create a Supabase client with the JWT token
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: {
+            Authorization: authHeader,
+          },
+        },
+      }
+    )
+
     const { data: { user }, error } = await supabase.auth.getUser()
     
     if (error || !user) {
@@ -23,7 +41,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    // Get the Authorization header
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader) {
+      return NextResponse.json({ error: 'No authorization header' }, { status: 401 })
+    }
+
+    // Create a Supabase client with the JWT token
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: {
+            Authorization: authHeader,
+          },
+        },
+      }
+    )
+
     const { data: { user }, error } = await supabase.auth.getUser()
     
     if (error || !user) {

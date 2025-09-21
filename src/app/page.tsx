@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/Providers'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 import WeeklyView from '@/components/WeeklyView'
 import DailyView from '@/components/DailyView'
 import AddRecordModal from '@/components/AddRecordModal'
@@ -34,8 +35,21 @@ export default function Home() {
   // Fetch records from database
   useEffect(() => {
     const fetchRecords = async () => {
+      if (!user) return
+      
       try {
-        const response = await fetch('/api/records')
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token) {
+          console.error('No access token')
+          setIsLoading(false)
+          return
+        }
+
+        const response = await fetch('/api/records', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        })
         if (response.ok) {
           const data = await response.json()
           setRecords(data)
@@ -50,10 +64,16 @@ export default function Home() {
     }
 
     fetchRecords()
-  }, [])
+  }, [user])
 
   const handleAddRecord = async (newRecord: Omit<Record, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        console.error('No access token')
+        return
+      }
+
       // Serialize dates properly
       const serializedRecord = {
         ...newRecord,
@@ -68,6 +88,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify(serializedRecord),
       })

@@ -27,3 +27,21 @@ export async function createClient() {
     }
   )
 }
+
+// Alternative client for API routes that doesn't use cookies
+export function createApiClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return []
+        },
+        setAll() {
+          // No-op for API routes
+        },
+      },
+    }
+  )
+}
