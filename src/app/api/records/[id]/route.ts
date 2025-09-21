@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { createClient } from '@/lib/supabase-server'
 import { updateRecord, deleteRecord } from '@/lib/db'
 
 export async function PUT(
@@ -8,9 +7,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const supabase = createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
     
-    if (!session?.user || !(session.user as any).id) {
+    if (error || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -30,9 +30,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const supabase = createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
     
-    if (!session?.user || !(session.user as any).id) {
+    if (error || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

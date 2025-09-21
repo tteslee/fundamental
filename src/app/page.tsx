@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useAuth } from '@/components/Providers'
+import { useRouter } from 'next/navigation'
 import WeeklyView from '@/components/WeeklyView'
 import DailyView from '@/components/DailyView'
 import AddRecordModal from '@/components/AddRecordModal'
@@ -10,7 +11,8 @@ import ExportModal from '@/components/ExportModal'
 import { Record, RecordType, AIReview } from '@/types'
 
 export default function Home() {
-  const { data: session, status } = useSession()
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
   const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false)
   const [records, setRecords] = useState<Record[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -21,6 +23,13 @@ export default function Home() {
   const [isLoadingAI, setIsLoadingAI] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin')
+    }
+  }, [user, loading, router])
 
   // Fetch records from database
   useEffect(() => {
@@ -50,7 +59,7 @@ export default function Home() {
         ...newRecord,
         startTime: newRecord.startTime.toISOString(),
         endTime: newRecord.endTime ? newRecord.endTime.toISOString() : null,
-        userId: 'cmfs3fans0000me40mimwsht2', // Demo user ID
+        userId: user?.id,
       }
 
       console.log('Sending record:', serializedRecord)
@@ -254,7 +263,7 @@ export default function Home() {
   }
 
   // Show loading state
-  if (isLoading) {
+  if (isLoading || loading) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -265,10 +274,36 @@ export default function Home() {
     )
   }
 
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to login...</p>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-white">
-      {/* View toggle */}
-      <div className="fixed top-4 right-4 z-40">
+      {/* Header with user info and controls */}
+      <div className="fixed top-4 right-4 z-40 flex items-center gap-4">
+        {/* User info and logout */}
+        <div className="bg-white rounded-lg shadow-lg p-3 flex items-center gap-3">
+          <div className="text-sm">
+            <p className="font-medium text-gray-900">{user?.user_metadata?.name || user?.email}</p>
+            <p className="text-gray-500 text-xs">Welcome back!</p>
+          </div>
+          <button
+            onClick={() => signOut()}
+            className="px-3 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+
+        {/* View toggle */}
         <div className="bg-white rounded-full shadow-lg p-1">
           <button
             onClick={() => setViewMode('weekly')}
