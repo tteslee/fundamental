@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Papa from 'papaparse'
-import puppeteer from 'puppeteer'
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,16 +52,16 @@ export async function POST(request: NextRequest) {
       }
     } else if (format === 'pdf') {
       try {
-        const pdfBytes = await generatePDF(exportRecords, startDate, endDate)
-        return new NextResponse(pdfBytes as any, {
+        const htmlContent = generateHTML(exportRecords, startDate, endDate)
+        return new NextResponse(htmlContent, {
           headers: {
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="fundamental-records.pdf"',
+            'Content-Type': 'text/html',
+            'Content-Disposition': 'attachment; filename="fundamental-records.html"',
           },
         })
       } catch (error) {
-        console.error('PDF generation error:', error)
-        return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
+        console.error('HTML generation error:', error)
+        return NextResponse.json({ error: 'HTML generation failed' }, { status: 500 })
       }
     }
 
@@ -86,9 +85,9 @@ function generateCSV(records: any[]): string {
   return Papa.unparse(csvData)
 }
 
-async function generatePDF(records: any[], startDate: string, endDate: string): Promise<Uint8Array> {
-  console.log('PDF generation - received records:', records.length)
-  console.log('First record for PDF:', records[0])
+function generateHTML(records: any[], startDate: string, endDate: string): string {
+  console.log('HTML generation - received records:', records.length)
+  console.log('First record for HTML:', records[0])
   
   // Helper function to get type labels in Korean
   const getTypeLabel = (type: string) => {
@@ -100,7 +99,7 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
     }
   }
 
-  // Generate HTML content
+  // Generate HTML content with print styles
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="ko">
@@ -110,6 +109,10 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
       <title>Fundamental Health Records</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        * {
+          box-sizing: border-box;
+        }
         
         body {
           font-family: 'Noto Sans KR', sans-serif;
@@ -146,6 +149,7 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
           border: 1px solid #e0e0e0;
           border-radius: 8px;
           background-color: #fafafa;
+          page-break-inside: avoid;
         }
         
         .record-header {
@@ -185,9 +189,54 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
           font-style: italic;
           margin-top: 50px;
         }
+        
+        /* Print styles */
+        @media print {
+          body {
+            margin: 0;
+            padding: 15mm;
+          }
+          
+          .record {
+            background-color: #ffffff !important;
+            border: 1px solid #ccc !important;
+          }
+          
+          .header {
+            border-bottom: 2px solid #000 !important;
+          }
+        }
+        
+        /* Print button */
+        .print-button {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background-color: #949CAF;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          cursor: pointer;
+          font-family: 'Noto Sans KR', sans-serif;
+          font-size: 14px;
+          z-index: 1000;
+        }
+        
+        .print-button:hover {
+          background-color: #7a8499;
+        }
+        
+        @media print {
+          .print-button {
+            display: none;
+          }
+        }
       </style>
     </head>
     <body>
+      <button class="print-button" onclick="window.print()">PDF로 인쇄</button>
+      
       <div class="header">
         <div class="title">Fundamental Health Records</div>
         <div class="subtitle">기간: ${new Date(startDate).toLocaleDateString('ko-KR')} ~ ${new Date(endDate).toLocaleDateString('ko-KR')}</div>
@@ -217,29 +266,5 @@ async function generatePDF(records: any[], startDate: string, endDate: string): 
     </html>
   `
 
-  // Launch Puppeteer and generate PDF
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  })
-  
-  try {
-    const page = await browser.newPage()
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
-    
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '20mm',
-        right: '20mm',
-        bottom: '20mm',
-        left: '20mm'
-      }
-    })
-    
-    return new Uint8Array(pdfBuffer)
-  } finally {
-    await browser.close()
-  }
+  return htmlContent
 }
