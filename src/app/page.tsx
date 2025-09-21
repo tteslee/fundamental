@@ -56,6 +56,8 @@ export default function Home() {
         })
         if (response.ok) {
           const data = await response.json()
+          console.log('Fetched records from API:', data)
+          console.log('Number of records fetched:', data.length)
           setRecords(data)
         } else {
           console.error('Failed to fetch records')
@@ -99,7 +101,13 @@ export default function Home() {
 
       if (response.ok) {
         const createdRecord = await response.json()
-        setRecords(prev => [...prev, createdRecord])
+        console.log('Created record response:', createdRecord)
+        console.log('Current records before adding:', records.length)
+        setRecords(prev => {
+          const newRecords = [...prev, createdRecord]
+          console.log('New records after adding:', newRecords.length)
+          return newRecords
+        })
         setIsAddRecordModalOpen(false)
       } else {
         const errorText = await response.text()
