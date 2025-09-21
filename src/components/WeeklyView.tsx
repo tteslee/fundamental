@@ -43,10 +43,13 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
     const dayEnd = new Date(date)
     dayEnd.setHours(23, 59, 59, 999)
     
-    return records.filter(record => {
+    const dayRecords = records.filter(record => {
       const recordDate = new Date(record.startTime)
       return recordDate >= dayStart && recordDate <= dayEnd
     })
+    
+    console.log('Records for day', date.toDateString(), ':', dayRecords.length, dayRecords)
+    return dayRecords
   }
 
   // Calculate sleep duration for a day
