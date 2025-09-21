@@ -9,7 +9,7 @@ import EditRecordModal from './EditRecordModal'
 
 interface DailyViewProps {
   records: Record[]
-  onAddRecord: () => void
+  onAddRecord: (currentDate?: Date) => void
   onEditRecord: (id: string, record: Partial<Record>) => void
   onDeleteRecord: (id: string) => void
   onAIReview: () => void
@@ -231,7 +231,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
               Export
             </button>
             <button
-              onClick={onAddRecord}
+              onClick={() => onAddRecord(currentDate)}
               className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow text-gray-900 text-2xl font-light"
             >
               +

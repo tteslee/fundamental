@@ -4,7 +4,7 @@ export type PrismaRecordType = 'SLEEP' | 'FOOD' | 'MEDICATION'
 
 export interface Record {
   id: string
-  type: RecordType
+  type: string // sleep, food, medication
   startTime: Date
   endTime?: Date
   duration?: number // in minutes

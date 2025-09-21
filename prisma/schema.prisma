@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -25,7 +25,7 @@ model User {
 
 model Record {
   id        String   @id @default(cuid())
-  type      RecordType
+  type      String   // sleep, food, medication
   startTime DateTime
   endTime   DateTime?
   duration  Int?     // in minutes
@@ -38,10 +38,4 @@ model Record {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("records")
-}
-
-enum RecordType {
-  SLEEP
-  FOOD
-  MEDICATION
 }

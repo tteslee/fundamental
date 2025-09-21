@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Record, RecordType } from '@/types'
 import { formatTime, getRecordTypeColor, getRecordTypeLabel } from '@/lib/utils'
 import TimeSelector from './TimeSelector'
@@ -10,14 +10,15 @@ import MemoInput from './MemoInput'
 interface AddRecordModalProps {
   isOpen: boolean
   onClose: () => void
-  onAddRecord: (record: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => void
+  onAddRecord: (record: Omit<Record, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => void
+  defaultDate?: Date | null
 }
 
-export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddRecordModalProps) {
+export default function AddRecordModal({ isOpen, onClose, onAddRecord, defaultDate }: AddRecordModalProps) {
   const [selectedType, setSelectedType] = useState<RecordType | null>(null)
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState<Date | null>(null)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(defaultDate || new Date())
   const [memo, setMemo] = useState('')
   const [showTimeSelector, setShowTimeSelector] = useState(false)
   const [showDateSelector, setShowDateSelector] = useState(false)
@@ -26,6 +27,13 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
   // Store time components separately to preserve them
   const [startTimeComponents, setStartTimeComponents] = useState({ hours: 0, minutes: 0 })
   const [endTimeComponents, setEndTimeComponents] = useState<{ hours: number, minutes: number } | null>(null)
+
+  // Update selectedDate when defaultDate changes
+  useEffect(() => {
+    if (defaultDate) {
+      setSelectedDate(defaultDate)
+    }
+  }, [defaultDate])
 
   const handleTypeSelect = (type: RecordType) => {
     setSelectedType(type)
@@ -39,6 +47,7 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
   }
 
   const handleTimeConfirm = (start: Date, end: Date | null) => {
+    console.log('Time confirmed:', { start, end, selectedType })
     setStartTime(start)
     setEndTime(end)
     
@@ -46,7 +55,14 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
     setStartTimeComponents({ hours: start.getHours(), minutes: start.getMinutes() })
     if (end) {
       setEndTimeComponents({ hours: end.getHours(), minutes: end.getMinutes() })
+    } else {
+      setEndTimeComponents(null)
     }
+    
+    console.log('Time components set:', { 
+      startTimeComponents: { hours: start.getHours(), minutes: start.getMinutes() },
+      endTimeComponents: end ? { hours: end.getHours(), minutes: end.getMinutes() } : null
+    })
     
     setShowTimeSelector(false)
     setShowDateSelector(true)
@@ -76,16 +92,35 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord }: AddReco
       }
     }
     
-    const record: Omit<Record, 'id' | 'createdAt' | 'updatedAt'> = {
-      type: selectedType!,
-      startTime: recordStartTime,
-      endTime: recordEndTime,
-      duration: endTimeComponents ? 
-        Math.round(((endTimeComponents.hours * 60 + endTimeComponents.minutes) - (startTimeComponents.hours * 60 + startTimeComponents.minutes) + (endTimeComponents.hours < startTimeComponents.hours ? 24 * 60 : 0)) * 60 * 1000) / (1000 * 60) : 
-        undefined,
-      memo: memoText || undefined,
-      userId: 'user1', // This would come from auth context
+    if (!selectedType) {
+      console.error('No record type selected')
+      return
     }
+
+    // Calculate duration for sleep records
+    let duration: number | undefined = undefined
+    if (selectedType === 'sleep' && endTimeComponents) {
+      const startMinutes = startTimeComponents.hours * 60 + startTimeComponents.minutes
+      const endMinutes = endTimeComponents.hours * 60 + endTimeComponents.minutes
+      
+      // Handle sleep that spans to next day (e.g., 11 PM to 7 AM)
+      if (endTimeComponents.hours < startTimeComponents.hours) {
+        duration = (24 * 60) - startMinutes + endMinutes
+      } else {
+        duration = endMinutes - startMinutes
+      }
+    }
+
+    const record: Omit<Record, 'id' | 'createdAt' | 'updatedAt'> = {
+      type: selectedType,
+      startTime: recordStartTime,
+      endTime: recordEndTime || undefined,
+      duration: duration,
+      memo: memoText || undefined,
+      userId: 'cmfs3fans0000me40mimwsht2', // Demo user ID
+    }
+
+    console.log('Creating record:', record)
     
     onAddRecord(record)
     handleClose()

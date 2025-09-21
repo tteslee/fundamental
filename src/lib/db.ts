@@ -17,22 +17,28 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function createRecord(data: {
-  type: RecordType
+  type: string
   startTime: Date
   endTime?: Date
   duration?: number
   memo?: string
   userId: string
 }): Promise<Record> {
+  console.log('Creating record with data:', data)
+  
+  const recordData = {
+    type: data.type, // Store as-is since we're using String in SQLite
+    startTime: data.startTime,
+    endTime: data.endTime,
+    duration: data.duration,
+    memo: data.memo,
+    userId: data.userId,
+  }
+  
+  console.log('Processed record data:', recordData)
+  
   return await prisma.record.create({
-    data: {
-      type: data.type.toUpperCase() as any,
-      startTime: data.startTime,
-      endTime: data.endTime,
-      duration: data.duration,
-      memo: data.memo,
-      userId: data.userId,
-    },
+    data: recordData,
   })
 }
 

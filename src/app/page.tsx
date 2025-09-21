@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import WeeklyView from '@/components/WeeklyView'
 import DailyView from '@/components/DailyView'
 import AddRecordModal from '@/components/AddRecordModal'
@@ -8,85 +9,76 @@ import AIReviewModal from '@/components/AIReviewModal'
 import ExportModal from '@/components/ExportModal'
 import { Record, RecordType, AIReview } from '@/types'
 
-// Mock data for development
-const mockRecords: Record[] = [
-  // December 25th records (for daily view)
-  {
-    id: '1',
-    type: 'sleep',
-    startTime: new Date('2023-12-24T23:20:00'),
-    endTime: new Date('2023-12-25T07:20:00'),
-    duration: 480,
-    memo: '새벽에 잤는데 적당하게 일어남',
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    type: 'food',
-    startTime: new Date('2023-12-25T08:10:00'),
-    memo: '우유랑 빵',
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    type: 'medication',
-    startTime: new Date('2023-12-25T08:40:00'),
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '4',
-    type: 'food',
-    startTime: new Date('2023-12-25T14:30:00'),
-    memo: '카레, 샐러드, 아메리카노',
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '5',
-    type: 'food',
-    startTime: new Date('2023-12-25T19:30:00'),
-    memo: '잡곡밥, 가지볶음',
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '6',
-    type: 'medication',
-    startTime: new Date('2023-12-25T23:40:00'),
-    userId: 'user1',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-]
-
 export default function Home() {
+  const { data: session, status } = useSession()
   const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false)
-  const [records, setRecords] = useState<Record[]>(mockRecords)
+  const [records, setRecords] = useState<Record[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'weekly' | 'daily'>('weekly')
   const [isAIReviewModalOpen, setIsAIReviewModalOpen] = useState(false)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const [aiReview, setAiReview] = useState<AIReview | null>(null)
   const [isLoadingAI, setIsLoadingAI] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
-  const handleAddRecord = (newRecord: Omit<Record, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
-    const record: Record = {
-      ...newRecord,
-      id: Date.now().toString(),
-      userId: 'demo-user', // Default user ID for demo
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  // Fetch records from database
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const response = await fetch('/api/records')
+        if (response.ok) {
+          const data = await response.json()
+          setRecords(data)
+        } else {
+          console.error('Failed to fetch records')
+        }
+      } catch (error) {
+        console.error('Error fetching records:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setRecords(prev => [...prev, record])
-    setIsAddRecordModalOpen(false)
+
+    fetchRecords()
+  }, [])
+
+  const handleAddRecord = async (newRecord: Omit<Record, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
+    try {
+      // Serialize dates properly
+      const serializedRecord = {
+        ...newRecord,
+        startTime: newRecord.startTime.toISOString(),
+        endTime: newRecord.endTime ? newRecord.endTime.toISOString() : null,
+        userId: 'cmfs3fans0000me40mimwsht2', // Demo user ID
+      }
+
+      console.log('Sending record:', serializedRecord)
+
+      const response = await fetch('/api/records', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(serializedRecord),
+      })
+
+      if (response.ok) {
+        const createdRecord = await response.json()
+        setRecords(prev => [...prev, createdRecord])
+        setIsAddRecordModalOpen(false)
+      } else {
+        const errorText = await response.text()
+        console.error('Failed to create record:', response.status, errorText)
+      }
+    } catch (error) {
+      console.error('Error creating record:', error)
+    }
+  }
+
+  const handleAddRecordWithDate = (currentDate?: Date) => {
+    setSelectedDate(currentDate || null)
+    setIsAddRecordModalOpen(true)
   }
 
   const handleEditRecord = (id: string, updatedRecord: Partial<Record>) => {
@@ -108,49 +100,66 @@ export default function Home() {
     setIsAIReviewModalOpen(true)
     
     try {
-      // Mock AI review for demo
-      const mockReview: AIReview = {
-        overallReview: {
-          summary: period === 'weekly' 
-            ? `You had a productive week with ${records.length} activities logged.`
-            : `Today you logged ${records.length} activities with good consistency.`,
-          positiveReinforcement: records.length > 0 
-            ? `Great job maintaining your tracking! You've been consistent with your logging.`
-            : `Keep up the good work with your daily logging!`,
-          patternsNoticed: `You tend to ${records.filter(r => r.type === 'food').length > 2 ? 'eat regularly' : 'have irregular meal times'}. ${records.filter(r => r.type === 'medication').length > 0 ? 'Your medication adherence looks good.' : 'Consider adding medication reminders.'}`,
-          moodLinkages: 'Your sleep patterns seem to correlate with your overall energy levels.'
+      // Filter records to only include 2025+ data (real data)
+      const realRecords = records.filter(record => {
+        const recordDate = new Date(record.startTime)
+        return recordDate.getFullYear() >= 2025
+      })
+
+      console.log('Sending AI review request for', realRecords.length, 'real records')
+
+      const response = await fetch('/api/ai-review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        thingsToImprove: {
-          habitGaps: records.length === 0 
-            ? 'Consider adding more tracking to get better insights into your patterns.'
-            : 'Your tracking consistency is good, keep it up!',
-          balanceIssues: 'Try to maintain a good balance between sleep, nutrition, and medication.',
-          actionableSuggestions: [
-            'Set a consistent bedtime routine',
-            'Try to log meals within 30 minutes of eating'
-          ]
-        },
-        highlightedWins: {
-          consistencyStreaks: `You've logged ${records.length} activities ${period === 'weekly' ? 'this week' : 'today'}.`,
-          improvementTrends: 'Your tracking habits are developing well.'
-        },
-        lookingAhead: {
-          motivation: 'Keep up the great work! Small consistent actions lead to big improvements.',
-          goalSetting: 'Next week, try to maintain your current tracking streak and add one new healthy habit.'
-        }
+        body: JSON.stringify({
+          period,
+          records: realRecords,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`AI review failed: ${response.status}`)
       }
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      setAiReview(mockReview)
+
+      const aiReview = await response.json()
+      console.log('AI review received:', aiReview)
+      setAiReview(aiReview)
     } catch (error) {
       console.error('Error fetching AI review:', error)
+      // Set a fallback review if API fails
+      setAiReview({
+        overallReview: {
+          summary: 'AI 분석을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.',
+          positiveReinforcement: '기록을 꾸준히 하시는 모습이 훌륭합니다.',
+          patternsNoticed: '더 많은 데이터가 필요합니다.',
+          moodLinkages: '패턴 분석을 위해 더 많은 기록을 추가해주세요.'
+        },
+        thingsToImprove: {
+          habitGaps: 'AI 분석을 위해 더 많은 기록을 추가해주세요.',
+          balanceIssues: '데이터가 부족하여 분석이 어렵습니다.',
+          actionableSuggestions: ['더 많은 기록을 추가해주세요', '정기적으로 기록해주세요']
+        },
+        highlightedWins: {
+          consistencyStreaks: '현재 기록을 유지하고 있습니다.',
+          improvementTrends: '더 많은 데이터가 필요합니다.'
+        },
+        lookingAhead: {
+          motivation: '계속해서 기록을 추가해주세요.',
+          goalSetting: '더 많은 데이터로 더 나은 분석을 받아보세요.'
+        }
+      })
     } finally {
       setIsLoadingAI(false)
     }
   }
 
   const handleExport = async (format: 'csv' | 'pdf') => {
+    console.log('Export triggered with format:', format)
+    console.log('Current records state at export time:', records.length, 'records')
+    console.log('Records data:', records)
+    
     setIsExporting(true)
     
     try {
@@ -159,41 +168,101 @@ export default function Home() {
       const startDate = new Date()
       startDate.setDate(startDate.getDate() - 30)
       
-      const response = await fetch('/api/export', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          format,
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-          records: records, // Send actual records
-        }),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Export failed')
+      // If no records, fetch them first
+      if (records.length === 0) {
+        console.log('No records in state, fetching from API...')
+        try {
+          const response = await fetch('/api/records')
+          if (response.ok) {
+            const data = await response.json()
+            console.log('Fetched records from API:', data.length, 'records')
+            setRecords(data)
+            // Use the fetched data for export
+            const serializedRecords = data.map(record => ({
+              ...record,
+              startTime: record.startTime instanceof Date ? record.startTime.toISOString() : record.startTime,
+              endTime: record.endTime ? (record.endTime instanceof Date ? record.endTime.toISOString() : record.endTime) : null,
+              createdAt: record.createdAt instanceof Date ? record.createdAt.toISOString() : record.createdAt,
+              updatedAt: record.updatedAt instanceof Date ? record.updatedAt.toISOString() : record.updatedAt,
+            }))
+            
+            console.log('Using fetched records for export:', serializedRecords.length, 'records')
+            await performExport(format, serializedRecords, startDate, endDate)
+            return
+          }
+        } catch (error) {
+          console.error('Error fetching records for export:', error)
+        }
       }
       
-      // Create blob and download
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `fundamental-records.${format}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      // Serialize records properly for JSON
+      const serializedRecords = records.map(record => ({
+        ...record,
+        startTime: record.startTime instanceof Date ? record.startTime.toISOString() : record.startTime,
+        endTime: record.endTime ? (record.endTime instanceof Date ? record.endTime.toISOString() : record.endTime) : null,
+        createdAt: record.createdAt instanceof Date ? record.createdAt.toISOString() : record.createdAt,
+        updatedAt: record.updatedAt instanceof Date ? record.updatedAt.toISOString() : record.updatedAt,
+      }))
       
-      setIsExportModalOpen(false)
+      console.log('Using existing records for export:', serializedRecords.length, 'records')
+      console.log('First record:', serializedRecords[0])
+      console.log('Sending export request:', { format, startDate: startDate.toISOString(), endDate: endDate.toISOString(), recordsCount: serializedRecords.length })
+      
+      await performExport(format, serializedRecords, startDate, endDate)
     } catch (error) {
       console.error('Error exporting data:', error)
       alert('Export failed. Please try again.')
     } finally {
       setIsExporting(false)
     }
+  }
+
+  const performExport = async (format: string, serializedRecords: any[], startDate: Date, endDate: Date) => {
+    const response = await fetch('/api/export', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        format,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        records: serializedRecords,
+      }),
+    })
+    
+    console.log('Export response status:', response.status, response.statusText)
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Export error response:', errorText)
+      throw new Error(`Export failed: ${response.status} ${response.statusText}`)
+    }
+    
+    // Create blob and download
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `fundamental-records.${format}`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    
+    setIsExportModalOpen(false)
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your records...</p>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -238,7 +307,7 @@ export default function Home() {
       ) : (
         <DailyView 
           records={records}
-          onAddRecord={() => setIsAddRecordModalOpen(true)}
+          onAddRecord={handleAddRecordWithDate}
           onEditRecord={handleEditRecord}
           onDeleteRecord={handleDeleteRecord}
           onAIReview={() => handleAIReview('daily')}
@@ -248,8 +317,12 @@ export default function Home() {
       
       <AddRecordModal
         isOpen={isAddRecordModalOpen}
-        onClose={() => setIsAddRecordModalOpen(false)}
+        onClose={() => {
+          setIsAddRecordModalOpen(false)
+          setSelectedDate(null)
+        }}
         onAddRecord={handleAddRecord}
+        defaultDate={selectedDate}
       />
 
       <AIReviewModal

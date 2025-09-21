@@ -1,53 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Papa from 'papaparse'
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import puppeteer from 'puppeteer'
 
 export async function POST(request: NextRequest) {
   try {
-    const { format, startDate, endDate, records = [] } = await request.json()
+    const body = await request.json()
+    console.log('Export API received request:', { 
+      format: body.format, 
+      startDate: body.startDate, 
+      endDate: body.endDate, 
+      recordsCount: body.records?.length || 0 
+    })
+    
+    const { format, startDate, endDate, records = [] } = body
     
     if (!startDate || !endDate) {
+      console.error('Missing required dates:', { startDate, endDate })
       return NextResponse.json({ error: 'Start and end dates are required' }, { status: 400 })
     }
     
-    // If no records provided, use some mock data for demo
-    const mockRecords = [
-      {
-        id: '1',
-        type: 'sleep',
-        startTime: new Date('2024-01-15T23:00:00Z'),
-        endTime: new Date('2024-01-16T07:00:00Z'),
-        duration: 480,
-        memo: 'Good sleep',
-        createdAt: new Date('2024-01-15T23:00:00Z'),
-      },
-      {
-        id: '2',
-        type: 'food',
-        startTime: new Date('2024-01-16T08:00:00Z'),
-        endTime: null,
-        duration: null,
-        memo: 'Breakfast - oatmeal',
-        createdAt: new Date('2024-01-16T08:00:00Z'),
-      },
-      {
-        id: '3',
-        type: 'medication',
-        startTime: new Date('2024-01-16T09:00:00Z'),
-        endTime: null,
-        duration: null,
-        memo: 'Vitamin D',
-        createdAt: new Date('2024-01-16T09:00:00Z'),
-      },
-    ]
+    if (!format || !['csv', 'pdf'].includes(format)) {
+      console.error('Invalid format:', format)
+      return NextResponse.json({ error: 'Invalid format. Must be csv or pdf' }, { status: 400 })
+    }
     
-    const exportRecords = records.length > 0 ? records : mockRecords
+    // Filter out 2024 mock data - only export 2025+ real data
+    const exportRecords = records.filter(record => {
+      const recordDate = new Date(record.startTime)
+      return recordDate.getFullYear() >= 2025
+    })
     
     // Debug: Log what records we're exporting
     console.log('Raw request body records:', records.length, 'records')
     console.log('Using records:', exportRecords.length, 'records')
     console.log('First record:', exportRecords[0])
     console.log('Records type:', typeof records, Array.isArray(records))
+    console.log('Date range:', { startDate, endDate })
     console.log('Full request body:', JSON.stringify({ format, startDate, endDate, recordsCount: records.length }))
 
     if (format === 'csv') {
@@ -99,106 +87,159 @@ function generateCSV(records: any[]): string {
 }
 
 async function generatePDF(records: any[], startDate: string, endDate: string): Promise<Uint8Array> {
-  const pdfDoc = await PDFDocument.create()
-  const page = pdfDoc.addPage([600, 800])
-  const { width, height } = page.getSize()
-
-  // Add title in Korean
-  const titleFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-  page.drawText('Fundamental Health Records', {
-    x: 50,
-    y: height - 50,
-    size: 20,
-    font: titleFont,
-    color: rgb(0, 0, 0),
-  })
-
-  // Add date range
-  const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-  page.drawText(`Period: ${startDate} to ${endDate}`, {
-    x: 50,
-    y: height - 80,
-    size: 12,
-    font: regularFont,
-    color: rgb(0.5, 0.5, 0.5),
-  })
-
-  // Add records count in Korean
-  page.drawText(`Total ${records.length} records`, {
-    x: 50,
-    y: height - 110,
-    size: 12,
-    font: regularFont,
-    color: rgb(0.3, 0.3, 0.3),
-  })
-
-  // Add records
-  let yPosition = height - 140
+  console.log('PDF generation - received records:', records.length)
+  console.log('First record for PDF:', records[0])
   
-  // Helper function to get type labels
+  // Helper function to get type labels in Korean
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'sleep': return 'Sleep'
-      case 'food': return 'Food'
-      case 'medication': return 'Medication'
+      case 'sleep': return '수면'
+      case 'food': return '식사'
+      case 'medication': return '약물'
       default: return type
     }
   }
-  
-  records.forEach((record, index) => {
-    if (yPosition < 100) {
-      // Add new page if needed
-      const newPage = pdfDoc.addPage([600, 800])
-      yPosition = newPage.getHeight() - 50
-    }
 
-    const currentPage = yPosition > 100 ? page : pdfDoc.getPages()[pdfDoc.getPageCount() - 1]
+  // Generate HTML content
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Fundamental Health Records</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        body {
+          font-family: 'Noto Sans KR', sans-serif;
+          margin: 0;
+          padding: 20px;
+          background-color: #ffffff;
+          color: #333;
+          line-height: 1.6;
+        }
+        
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 2px solid #949CAF;
+          padding-bottom: 20px;
+        }
+        
+        .title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #2c3e50;
+          margin-bottom: 10px;
+        }
+        
+        .subtitle {
+          font-size: 14px;
+          color: #7f8c8d;
+          margin-bottom: 5px;
+        }
+        
+        .record {
+          margin-bottom: 20px;
+          padding: 15px;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          background-color: #fafafa;
+        }
+        
+        .record-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+        
+        .record-type {
+          font-weight: 500;
+          color: #949CAF;
+          font-size: 16px;
+        }
+        
+        .record-time {
+          font-size: 14px;
+          color: #666;
+        }
+        
+        .record-duration {
+          font-size: 12px;
+          color: #888;
+          margin-top: 5px;
+        }
+        
+        .record-memo {
+          font-size: 14px;
+          color: #333;
+          margin-top: 8px;
+          font-style: italic;
+        }
+        
+        .no-records {
+          text-align: center;
+          color: #7f8c8d;
+          font-style: italic;
+          margin-top: 50px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="title">Fundamental Health Records</div>
+        <div class="subtitle">기간: ${new Date(startDate).toLocaleDateString('ko-KR')} ~ ${new Date(endDate).toLocaleDateString('ko-KR')}</div>
+        <div class="subtitle">총 ${records.length}개의 기록</div>
+      </div>
+      
+      ${records.length === 0 ? 
+        '<div class="no-records">내보낼 기록이 없습니다.</div>' :
+        records.map((record, index) => {
+          const startTime = new Date(record.startTime).toLocaleString('ko-KR')
+          const endTime = record.endTime ? new Date(record.endTime).toLocaleString('ko-KR') : null
+          const duration = record.duration ? `${Math.floor(record.duration / 60)}시간 ${record.duration % 60}분` : null
+          
+          return `
+            <div class="record">
+              <div class="record-header">
+                <div class="record-type">${getTypeLabel(record.type)}</div>
+                <div class="record-time">${startTime}${endTime ? ` ~ ${endTime}` : ''}</div>
+              </div>
+              ${duration ? `<div class="record-duration">지속시간: ${duration}</div>` : ''}
+              ${record.memo ? `<div class="record-memo">메모: ${record.memo}</div>` : ''}
+            </div>
+          `
+        }).join('')
+      }
+    </body>
+    </html>
+  `
+
+  // Launch Puppeteer and generate PDF
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  })
+  
+  try {
+    const page = await browser.newPage()
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
     
-    // Format time
-    const startTime = new Date(record.startTime).toISOString()
-    const endTime = record.endTime ? new Date(record.endTime).toISOString() : null
-    
-    // Record display
-    const typeLabel = getTypeLabel(record.type)
-    const timeText = endTime ? `${startTime} ~ ${endTime}` : startTime
-    const recordText = `${index + 1}. ${typeLabel} - ${timeText}`
-    
-    currentPage.drawText(recordText, {
-      x: 50,
-      y: yPosition,
-      size: 12,
-      font: regularFont,
-      color: rgb(0, 0, 0),
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '20mm',
+        right: '20mm',
+        bottom: '20mm',
+        left: '20mm'
+      }
     })
     
-    // Duration for sleep records
-    if (record.duration && record.type === 'sleep') {
-      const hours = Math.floor(record.duration / 60)
-      const minutes = record.duration % 60
-      currentPage.drawText(`Duration: ${hours}h ${minutes}m`, {
-        x: 70,
-        y: yPosition - 20,
-        size: 10,
-        font: regularFont,
-        color: rgb(0.2, 0.2, 0.2),
-      })
-      yPosition -= 20
-    }
-    
-    // Memo
-    if (record.memo) {
-      currentPage.drawText(`Memo: ${record.memo}`, {
-        x: 70,
-        y: yPosition - 20,
-        size: 10,
-        font: regularFont,
-        color: rgb(0.3, 0.3, 0.3),
-      })
-      yPosition -= 40
-    } else {
-      yPosition -= 25
-    }
-  })
-
-  return await pdfDoc.save()
+    return new Uint8Array(pdfBuffer)
+  } finally {
+    await browser.close()
+  }
 }

@@ -20,9 +20,9 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
   // Generate month options
   const getMonthOptions = () => {
     const months = []
-    const currentDate = new Date()
+    const baseDate = selectedDate
     for (let i = -2; i <= 2; i++) {
-      const month = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1)
+      const month = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1)
       months.push({
         value: month.getMonth(),
         label: month.toLocaleDateString('ko-KR', { month: 'short' }),
@@ -35,7 +35,7 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
   // Generate day options for selected month
   const getDayOptions = () => {
     const days = []
-    const year = new Date().getFullYear()
+    const year = selectedDate.getFullYear()
     const daysInMonth = new Date(year, selectedMonth + 1, 0).getDate()
     
     for (let day = 1; day <= daysInMonth; day++) {
@@ -54,12 +54,12 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
 
   // Create a computed date based on current selections
   const getCurrentSelectedDate = () => {
-    const year = new Date().getFullYear()
+    const year = selectedDate.getFullYear()
     return new Date(year, selectedMonth, selectedDay)
   }
 
   const handleConfirm = () => {
-    const year = new Date().getFullYear()
+    const year = selectedDate.getFullYear()
     const date = new Date(year, selectedMonth, selectedDay)
     
     // Preserve the time from the original selectedDate
