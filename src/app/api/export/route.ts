@@ -56,7 +56,6 @@ export async function POST(request: NextRequest) {
         return new NextResponse(htmlContent, {
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
-            'Content-Disposition': 'inline; filename="fundamental-records.html"',
           },
         })
       } catch (error) {
@@ -207,11 +206,17 @@ function generateHTML(records: any[], startDate: string, endDate: string): strin
           }
         }
         
-        /* Print button */
-        .print-button {
+        /* Action buttons */
+        .action-buttons {
           position: fixed;
           top: 20px;
           right: 20px;
+          display: flex;
+          gap: 10px;
+          z-index: 1000;
+        }
+        
+        .action-button {
           background-color: #949CAF;
           color: white;
           border: none;
@@ -220,22 +225,33 @@ function generateHTML(records: any[], startDate: string, endDate: string): strin
           cursor: pointer;
           font-family: 'Noto Sans KR', sans-serif;
           font-size: 14px;
-          z-index: 1000;
+          transition: background-color 0.2s;
         }
         
-        .print-button:hover {
+        .action-button:hover {
           background-color: #7a8499;
         }
         
+        .action-button.primary {
+          background-color: #2563eb;
+        }
+        
+        .action-button.primary:hover {
+          background-color: #1d4ed8;
+        }
+        
         @media print {
-          .print-button {
+          .action-buttons {
             display: none;
           }
         }
       </style>
     </head>
     <body>
-      <button class="print-button" onclick="window.print()">PDF로 인쇄</button>
+      <div class="action-buttons">
+        <button class="action-button primary" onclick="downloadPDF()">PDF 다운로드</button>
+        <button class="action-button" onclick="window.print()">인쇄</button>
+      </div>
       
       <div class="header">
         <div class="title">Fundamental Health Records</div>
@@ -262,6 +278,18 @@ function generateHTML(records: any[], startDate: string, endDate: string): strin
           `
         }).join('')
       }
+      
+      <script>
+        function downloadPDF() {
+          // Trigger print dialog and suggest PDF as destination
+          window.print();
+        }
+        
+        // Auto-focus on the download button when page loads
+        window.onload = function() {
+          document.querySelector('.action-button.primary').focus();
+        }
+      </script>
     </body>
     </html>
   `

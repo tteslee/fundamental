@@ -133,8 +133,35 @@ export default function Home() {
     )
   }
 
-  const handleDeleteRecord = (id: string) => {
-    setRecords(prev => prev.filter(record => record.id !== id))
+  const handleDeleteRecord = async (id: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        console.error('No access token')
+        return
+      }
+
+      console.log('Deleting record:', id)
+
+      const response = await fetch(`/api/records/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      })
+
+      if (response.ok) {
+        console.log('Record deleted successfully')
+        setRecords(prev => prev.filter(record => record.id !== id))
+      } else {
+        const errorText = await response.text()
+        console.error('Failed to delete record:', response.status, errorText)
+        alert('Failed to delete record. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error deleting record:', error)
+      alert('Error deleting record. Please try again.')
+    }
   }
 
   const handleAIReview = async (period: 'daily' | 'weekly') => {
@@ -281,16 +308,24 @@ export default function Home() {
       throw new Error(`Export failed: ${response.status} ${response.statusText}`)
     }
     
-    // Create blob and download
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `fundamental-records.${format}`
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(url)
-    document.body.removeChild(a)
+    if (format === 'pdf') {
+      // For PDF, open in new tab
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      window.URL.revokeObjectURL(url)
+    } else {
+      // For CSV, download directly
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `fundamental-records.${format}`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    }
     
     setIsExportModalOpen(false)
   }
