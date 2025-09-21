@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch records' }, { status: 500 })
     }
 
+    console.log('Fetched records for user:', user.id, 'Count:', records?.length || 0)
     return NextResponse.json(records || [])
   } catch (error) {
     console.error('Error fetching records:', error)
@@ -110,7 +111,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    console.log('Created record:', record)
+    console.log('Successfully created record:', record)
     return NextResponse.json(record)
   } catch (error) {
     console.error('Error creating record:', error)
