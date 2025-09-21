@@ -43,9 +43,15 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
     const dayEnd = new Date(date)
     dayEnd.setHours(23, 59, 59, 999)
     
+    console.log('Checking day:', date.toDateString())
+    console.log('Day range:', dayStart.toISOString(), 'to', dayEnd.toISOString())
+    console.log('All records:', records.map(r => ({ id: r.id, startTime: r.startTime, type: r.type })))
+    
     const dayRecords = records.filter(record => {
       const recordDate = new Date(record.startTime)
-      return recordDate >= dayStart && recordDate <= dayEnd
+      const isInRange = recordDate >= dayStart && recordDate <= dayEnd
+      console.log('Record', record.id, 'startTime:', record.startTime, 'parsed:', recordDate.toISOString(), 'in range:', isInRange)
+      return isInRange
     })
     
     console.log('Records for day', date.toDateString(), ':', dayRecords.length, dayRecords)
