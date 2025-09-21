@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createRecord, getRecordsByUser } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,8 +30,19 @@ export async function GET(request: NextRequest) {
     
     console.log('Fetching records for user:', user.id)
 
-    const records = await getRecordsByUser(user.id)
-    return NextResponse.json(records)
+    // Use Supabase directly instead of Prisma
+    const { data: records, error: recordsError } = await supabase
+      .from('records')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('start_time', { ascending: false })
+
+    if (recordsError) {
+      console.error('Error fetching records from Supabase:', recordsError)
+      return NextResponse.json({ error: 'Failed to fetch records' }, { status: 500 })
+    }
+
+    return NextResponse.json(records || [])
   } catch (error) {
     console.error('Error fetching records:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -71,17 +81,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     console.log('Request body:', body)
 
-    // Convert ISO strings back to Date objects
+    // Prepare record data for Supabase
     const recordData = {
-      ...body,
-      startTime: new Date(body.startTime),
-      endTime: body.endTime ? new Date(body.endTime) : undefined,
-      userId: user.id,
+      type: body.type,
+      start_time: body.startTime,
+      end_time: body.endTime,
+      duration: body.duration,
+      memo: body.memo,
+      user_id: user.id,
     }
 
     console.log('Processed record data:', recordData)
 
-    const record = await createRecord(recordData)
+    // Use Supabase directly instead of Prisma
+    const { data: record, error: insertError } = await supabase
+      .from('records')
+      .insert(recordData)
+      .select()
+      .single()
+
+    if (insertError) {
+      console.error('Error creating record in Supabase:', insertError)
+      return NextResponse.json({ error: 'Failed to create record' }, { status: 500 })
+    }
 
     console.log('Created record:', record)
     return NextResponse.json(record)
