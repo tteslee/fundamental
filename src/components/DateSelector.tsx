@@ -81,7 +81,7 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
             minute: '2-digit' 
           })}
         </div>
-        <div className="text-sm text-gray-500 mt-1">Selected Time</div>
+        <div className="text-sm text-gray-500 mt-1">선택된 시간</div>
       </div>
 
       {/* Time range display */}
@@ -96,7 +96,7 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
               minute: '2-digit' 
             })}
           </div>
-          <div className="text-gray-300 text-xs">start</div>
+          <div className="text-gray-300 text-xs">시작</div>
         </div>
         <div className="mx-4 text-gray-300">→</div>
         <div className="text-center">
@@ -112,7 +112,7 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
               minute: '2-digit' 
             }))}
           </div>
-          <div className="text-gray-300 text-xs">end</div>
+          <div className="text-gray-300 text-xs">종료</div>
         </div>
       </div>
 
@@ -173,14 +173,14 @@ export default function DateSelector({ selectedDate, selectedType, startTime, en
           onClick={onBack}
           className="px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
         >
-          Back
+          취소
         </button>
         <button
           onClick={handleConfirm}
           className="px-6 py-2 rounded-full text-white font-medium transition-colors"
           style={{ backgroundColor: getRecordTypeColor(selectedType) }}
         >
-          Confirm
+          확인
         </button>
       </div>
     </div>

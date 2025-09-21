@@ -79,7 +79,7 @@ export default function TimeSelector({
       {/* Header */}
       <div className="text-center">
         <div className="text-2xl font-bold text-gray-900">
-          {isSelectingEndTime ? 'End Time' : 'Start Time'}
+          {isSelectingEndTime ? '종료 시간' : '시작 시간'}
         </div>
         <div className="text-3xl font-bold text-gray-900 mt-2">
           {currentTime?.toLocaleTimeString('en-US', { 
@@ -103,7 +103,7 @@ export default function TimeSelector({
           <div className={`text-sm font-medium ${
             !isSelectingEndTime ? 'text-blue-700' : 'text-gray-600'
           }`}>
-            From
+            시작
           </div>
           <div className={`text-lg ${
             !isSelectingEndTime ? 'text-blue-900' : 'text-gray-700'
@@ -129,7 +129,7 @@ export default function TimeSelector({
           <div className={`text-sm font-medium ${
             isSelectingEndTime ? 'text-blue-700' : 'text-gray-600'
           }`}>
-            To
+            종료
           </div>
           <div className={`text-lg ${
             isSelectingEndTime ? 'text-blue-900' : 'text-gray-700'
@@ -159,11 +159,11 @@ export default function TimeSelector({
 
       {/* 24-hour time selector */}
       <div className="bg-gray-100 rounded-lg p-4">
-        <div className="text-center text-sm text-gray-600 mb-3">Select Time</div>
+        <div className="text-center text-sm text-gray-600 mb-3">시간 선택</div>
         
         {/* Hour selector */}
         <div className="mb-4">
-          <div className="text-xs text-gray-500 mb-2">Hour</div>
+          <div className="text-xs text-gray-500 mb-2">시간</div>
           <div className="flex overflow-x-auto space-x-2 pb-2">
             {Array.from({ length: 24 }, (_, hour) => (
               <button
@@ -183,7 +183,7 @@ export default function TimeSelector({
 
         {/* Minute selector */}
         <div>
-          <div className="text-xs text-gray-500 mb-2">Minute</div>
+          <div className="text-xs text-gray-500 mb-2">분</div>
           <div className="flex overflow-x-auto space-x-2 pb-2">
             {[0, 15, 30, 45].map((minute) => (
               <button
@@ -208,14 +208,14 @@ export default function TimeSelector({
           onClick={onBack}
           className="px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
         >
-          Back
+          취소
         </button>
         <button
           onClick={handleConfirm}
           className="px-6 py-2 rounded-full text-white font-medium transition-colors"
           style={{ backgroundColor: getRecordTypeColor(selectedType) }}
         >
-          Confirm
+          확인
         </button>
       </div>
     </div>

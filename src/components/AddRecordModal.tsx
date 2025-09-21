@@ -177,7 +177,7 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord, defaultDa
           onClick={forceClose}
           className="absolute top-4 left-4 text-gray-400 text-sm"
         >
-          cancel
+          취소
         </button>
 
         {/* Content */}
@@ -189,19 +189,19 @@ export default function AddRecordModal({ isOpen, onClose, onAddRecord, defaultDa
                 <div className="text-3xl font-bold text-gray-900">
                   {formatTime(new Date())}
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Now</div>
+                <div className="text-sm text-gray-500 mt-1">현재</div>
               </div>
 
               {/* Time range display */}
               <div className="flex items-center justify-center py-4">
                 <div className="text-center">
                   <div className="text-gray-400 text-sm">{formatTime(new Date())}</div>
-                  <div className="text-gray-300 text-xs">today</div>
+                  <div className="text-gray-300 text-xs">오늘</div>
                 </div>
                 <div className="mx-4 text-gray-300">→</div>
                 <div className="text-center">
                   <div className="text-gray-400 text-sm">{formatTime(new Date())}</div>
-                  <div className="text-gray-300 text-xs">today</div>
+                  <div className="text-gray-300 text-xs">오늘</div>
                 </div>
               </div>
 

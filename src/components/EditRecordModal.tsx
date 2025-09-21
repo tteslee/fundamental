@@ -125,7 +125,7 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
           onClick={handleClose}
           className="absolute top-4 left-4 text-gray-400 text-sm"
         >
-          cancel
+          취소
         </button>
 
         {/* Content */}
@@ -137,21 +137,21 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
                 <div className="text-3xl font-bold text-gray-900">
                   {formatTime(new Date(record.startTime))}
                 </div>
-                <div className="text-sm text-gray-500 mt-1">Edit Record</div>
+                <div className="text-sm text-gray-500 mt-1">기록 편집</div>
               </div>
 
               {/* Time range display */}
               <div className="flex items-center justify-center py-4">
                 <div className="text-center">
                   <div className="text-gray-400 text-sm">{formatTime(new Date(record.startTime))}</div>
-                  <div className="text-gray-300 text-xs">today</div>
+                  <div className="text-gray-300 text-xs">오늘</div>
                 </div>
                 <div className="mx-4 text-gray-300">→</div>
                 <div className="text-center">
                   <div className="text-gray-400 text-sm">
                     {record.endTime ? formatTime(new Date(record.endTime)) : formatTime(new Date(record.startTime))}
                   </div>
-                  <div className="text-gray-300 text-xs">today</div>
+                  <div className="text-gray-300 text-xs">오늘</div>
                 </div>
               </div>
 
@@ -177,14 +177,14 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
                   className="px-6 py-2 rounded-full text-white font-medium transition-colors"
                   style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
                 >
-                  Edit
+                  편집
                 </button>
                 <button
                   onClick={handleDelete}
                   className="px-6 py-2 rounded-full text-white font-medium transition-opacity hover:opacity-80"
                   style={{ backgroundColor: '#949CAF' }}
                 >
-                  Delete
+                  삭제
                 </button>
               </div>
             </>
