@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
         const htmlContent = generateHTML(exportRecords, startDate, endDate)
         return new NextResponse(htmlContent, {
           headers: {
-            'Content-Type': 'text/html',
-            'Content-Disposition': 'attachment; filename="fundamental-records.html"',
+            'Content-Type': 'text/html; charset=utf-8',
+            'Content-Disposition': 'inline; filename="fundamental-records.html"',
           },
         })
       } catch (error) {
