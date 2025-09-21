@@ -45,6 +45,10 @@ export default function Home() {
           return
         }
 
+        // Debug: Check user info
+        console.log('Current user:', user)
+        console.log('User ID:', user.id)
+
         const response = await fetch('/api/records', {
           headers: {
             'Authorization': `Bearer ${session.access_token}`
