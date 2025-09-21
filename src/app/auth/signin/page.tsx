@@ -45,7 +45,7 @@ export default function SignIn() {
               body: JSON.stringify({
                 id: data.user.id,
                 email: data.user.email,
-                name: data.user.user_metadata?.name || name || email.split('@')[0]
+                name: data.user.user_metadata?.name || name || (email ? email.split('@')[0] : 'User')
               })
             })
             
@@ -79,7 +79,7 @@ export default function SignIn() {
               body: JSON.stringify({
                 id: data.user.id,
                 email: data.user.email,
-                name: data.user.user_metadata?.name || data.user.email.split('@')[0]
+                name: data.user.user_metadata?.name || (data.user.email ? data.user.email.split('@')[0] : 'User')
               })
             })
             
