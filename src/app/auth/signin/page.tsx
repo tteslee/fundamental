@@ -50,7 +50,10 @@ export default function SignIn() {
             })
             
             if (!response.ok) {
-              console.error('Failed to create user record')
+              const errorData = await response.json()
+              console.error('Failed to create user record:', errorData)
+            } else {
+              console.log('User record created successfully')
             }
           } catch (error) {
             console.error('Error creating user record:', error)
@@ -84,7 +87,10 @@ export default function SignIn() {
             })
             
             if (!response.ok) {
-              console.error('Failed to create/verify user record')
+              const errorData = await response.json()
+              console.error('Failed to create/verify user record:', errorData)
+            } else {
+              console.log('User record created/verified successfully')
             }
           } catch (error) {
             console.error('Error creating/verifying user record:', error)
