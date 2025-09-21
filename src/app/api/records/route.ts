@@ -102,7 +102,12 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error('Error creating record in Supabase:', insertError)
-      return NextResponse.json({ error: 'Failed to create record' }, { status: 500 })
+      console.error('Record data that failed:', recordData)
+      return NextResponse.json({ 
+        error: 'Failed to create record', 
+        details: insertError.message,
+        code: insertError.code 
+      }, { status: 500 })
     }
 
     console.log('Created record:', record)
