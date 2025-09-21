@@ -34,7 +34,28 @@ export default function SignIn() {
         if (error) {
           setError(error.message)
         } else if (data.user) {
-          // User created successfully
+          // User created successfully - create user record in our database
+          try {
+            const response = await fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.session?.access_token}`
+              },
+              body: JSON.stringify({
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || name || email.split('@')[0]
+              })
+            })
+            
+            if (!response.ok) {
+              console.error('Failed to create user record')
+            }
+          } catch (error) {
+            console.error('Error creating user record:', error)
+          }
+          
           router.push('/')
         }
       } else {
@@ -47,6 +68,28 @@ export default function SignIn() {
         if (error) {
           setError(error.message)
         } else if (data.user) {
+          // User logged in successfully - ensure user record exists
+          try {
+            const response = await fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.session?.access_token}`
+              },
+              body: JSON.stringify({
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || data.user.email.split('@')[0]
+              })
+            })
+            
+            if (!response.ok) {
+              console.error('Failed to create/verify user record')
+            }
+          } catch (error) {
+            console.error('Error creating/verifying user record:', error)
+          }
+          
           router.push('/')
         }
       }
