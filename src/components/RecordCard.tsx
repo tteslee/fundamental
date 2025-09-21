@@ -68,34 +68,44 @@ export default function RecordCard({ record, onEdit, onDelete, variant = 'list' 
 
   if (variant === 'timeline') {
     // For timeline view, just show the dot/bar
-    const startTime = new Date(record.startTime)
-    const topPosition = (startTime.getHours() * 60 + startTime.getMinutes()) / (24 * 60) * 100
-    const height = record.type === 'sleep' && record.duration ? (record.duration / (24 * 60)) * 100 : 8
-    
-    console.log('Timeline record:', {
-      type: record.type,
-      duration: record.duration,
-      startTime: record.startTime,
-      topPosition,
-      height,
-      isSleep: record.type === 'sleep'
-    })
-    
-    return (
-      <div
-        className="absolute left-0 right-0 cursor-pointer group"
-        style={{ 
-          top: `${topPosition}%`,
-          height: `${height}%`
-        }}
-        onClick={() => onEdit(record)}
-      >
-        <div 
-          className="w-3 h-full rounded-full mx-auto opacity-80 hover:opacity-100 transition-opacity"
-          style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
-        />
-      </div>
-    )
+    try {
+      const startTime = new Date(record.startTime)
+      if (isNaN(startTime.getTime())) {
+        console.error('Invalid startTime for record', record.id, 'startTime:', record.startTime)
+        return null
+      }
+      
+      const topPosition = (startTime.getHours() * 60 + startTime.getMinutes()) / (24 * 60) * 100
+      const height = record.type === 'sleep' && record.duration ? (record.duration / (24 * 60)) * 100 : 8
+      
+      console.log('Timeline record:', {
+        type: record.type,
+        duration: record.duration,
+        startTime: record.startTime,
+        topPosition,
+        height,
+        isSleep: record.type === 'sleep'
+      })
+      
+      return (
+        <div
+          className="absolute left-0 right-0 cursor-pointer group"
+          style={{ 
+            top: `${topPosition}%`,
+            height: `${height}%`
+          }}
+          onClick={() => onEdit(record)}
+        >
+          <div 
+            className="w-3 h-full rounded-full mx-auto opacity-80 hover:opacity-100 transition-opacity"
+            style={{ backgroundColor: getRecordTypeColor(record.type as any) }}
+          />
+        </div>
+      )
+    } catch (error) {
+      console.error('Error rendering timeline record', record.id, error)
+      return null
+    }
   }
 
   return (

@@ -48,10 +48,19 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
     console.log('All records:', records.map(r => ({ id: r.id, startTime: r.startTime, type: r.type })))
     
     const dayRecords = records.filter(record => {
-      const recordDate = new Date(record.startTime)
-      const isInRange = recordDate >= dayStart && recordDate <= dayEnd
-      console.log('Record', record.id, 'startTime:', record.startTime, 'parsed:', recordDate.toISOString(), 'in range:', isInRange)
-      return isInRange
+      try {
+        const recordDate = new Date(record.startTime)
+        if (isNaN(recordDate.getTime())) {
+          console.error('Invalid date for record', record.id, 'startTime:', record.startTime)
+          return false
+        }
+        const isInRange = recordDate >= dayStart && recordDate <= dayEnd
+        console.log('Record', record.id, 'startTime:', record.startTime, 'parsed:', recordDate.toISOString(), 'in range:', isInRange)
+        return isInRange
+      } catch (error) {
+        console.error('Error parsing date for record', record.id, 'startTime:', record.startTime, error)
+        return false
+      }
     })
     
     console.log('Records for day', date.toDateString(), ':', dayRecords.length, dayRecords)
