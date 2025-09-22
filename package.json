@@ -13,6 +13,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.12.1",
     "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^5.8.1",
     "@radix-ui/react-dialog": "^1.0.5",

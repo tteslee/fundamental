@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
@@ -11,6 +12,8 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
   const [error, setError] = useState('')
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useRef<HCaptcha>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +27,8 @@ export default function SignIn() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
+          options: { 
+            captchaToken,
             data: {
               name: name || email.split('@')[0],
             }
@@ -58,6 +62,9 @@ export default function SignIn() {
           } catch (error) {
             console.error('Error creating user record:', error)
           }
+          
+          // Reset captcha after successful signup
+          captcha.current?.resetCaptcha()
           
           router.push('/')
         }
@@ -190,6 +197,16 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="비밀번호를 입력하세요"
+            />
+          </div>
+
+          <div className="flex justify-center">
+            <HCaptcha
+              ref={captcha}
+              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ''}
+              onVerify={(token) => {
+                setCaptchaToken(token)
+              }}
             />
           </div>
 
