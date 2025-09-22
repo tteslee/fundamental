@@ -123,14 +123,52 @@ export default function Home() {
     setIsAddRecordModalOpen(true)
   }
 
-  const handleEditRecord = (id: string, updatedRecord: Partial<Record>) => {
-    setRecords(prev => 
-      prev.map(record => 
-        record.id === id 
-          ? { ...record, ...updatedRecord, updatedAt: new Date() }
-          : record
-      )
-    )
+  const handleEditRecord = async (id: string, updatedRecord: Partial<Record>) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        console.error('No access token')
+        return
+      }
+
+      // Serialize dates properly
+      const serializedRecord = {
+        ...updatedRecord,
+        startTime: updatedRecord.startTime instanceof Date ? updatedRecord.startTime.toISOString() : updatedRecord.startTime,
+        endTime: updatedRecord.endTime instanceof Date ? updatedRecord.endTime.toISOString() : updatedRecord.endTime,
+      }
+
+      console.log('Updating record:', id, 'with data:', serializedRecord)
+      console.log('Original updatedRecord:', updatedRecord)
+
+      const response = await fetch(`/api/records/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(serializedRecord),
+      })
+
+      if (response.ok) {
+        const updatedRecord = await response.json()
+        console.log('Updated record response:', updatedRecord)
+        
+        // Update local state with the response from the server
+        setRecords(prev => 
+          prev.map(record => 
+            record.id === id 
+              ? { ...record, ...updatedRecord, updatedAt: new Date() }
+              : record
+          )
+        )
+      } else {
+        const errorText = await response.text()
+        console.error('Failed to update record:', response.status, errorText)
+      }
+    } catch (error) {
+      console.error('Error updating record:', error)
+    }
   }
 
   const handleDeleteRecord = async (id: string) => {

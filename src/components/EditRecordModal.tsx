@@ -78,6 +78,10 @@ export default function EditRecordModal({ isOpen, record, onClose, onUpdateRecor
         memo: memoText || undefined,
       }
       
+      console.log('EditRecordModal - sending updatedRecord:', updatedRecord)
+      console.log('EditRecordModal - recordStartTime:', recordStartTime)
+      console.log('EditRecordModal - recordEndTime:', recordEndTime)
+      
       onUpdateRecord(record.id, updatedRecord)
     }
     
