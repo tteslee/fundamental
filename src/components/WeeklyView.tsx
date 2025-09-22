@@ -146,7 +146,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       </div>
 
       {/* Week days */}
-      <div className="bg-white px-6 pb-6">
+      <div className="bg-white px-6 pb-4">
         <div className="flex justify-between">
           {weekDays.map((day, index) => (
             <div key={index} className="text-center">
@@ -163,7 +163,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       </div>
 
       {/* Timeline visualization */}
-      <div className="flex-1 px-6 pt-8 pb-4 bg-white">
+      <div className="flex-1 px-6 pb-4 bg-white">
         <div className="relative h-full">
           {/* Time labels */}
           <div className="absolute left-0 top-0 h-full w-20 text-xs text-gray-400">
