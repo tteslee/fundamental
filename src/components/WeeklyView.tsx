@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Record } from '@/types'
 import { getWeekStart, getWeekEnd, formatDate, formatDuration, getRecordTypeColor } from '@/lib/utils'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import RecordCard from './RecordCard'
 import EditRecordModal from './EditRecordModal'
 
@@ -16,7 +17,7 @@ interface WeeklyViewProps {
 }
 
 export default function WeeklyView({ records, onAddRecord, onEditRecord, onDeleteRecord, onAIReview, onExport }: WeeklyViewProps) {
-  const [currentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState(new Date())
   const [editingRecord, setEditingRecord] = useState<Record | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const weekStart = getWeekStart(currentDate)
@@ -108,20 +109,44 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
     setEditingRecord(null)
   }
 
+  const navigateWeek = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate)
+    newDate.setDate(currentDate.getDate() + (direction === 'next' ? 7 : -7))
+    setCurrentDate(newDate)
+  }
+
   return (
     <div className="h-screen flex flex-col">
-      {/* Header with current date */}
-      <div className="px-6 pt-16 pb-4">
-        <div className="text-3xl font-bold text-gray-900">
-          {formatDate(currentDate).split('.')[1]}월 {formatDate(currentDate).split('.')[2]}일
-        </div>
-        <div className="text-lg text-gray-500 mt-1">
-          {currentDate.getFullYear()}
+      {/* Header with current date and navigation */}
+      <div className="bg-gray-900 text-white px-6 pt-16 pb-4">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => navigateWeek('prev')}
+            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          
+          <div className="text-center">
+            <div className="text-3xl font-bold">
+              {formatDate(currentDate).split('.')[1]}월 {formatDate(currentDate).split('.')[2]}일
+            </div>
+            <div className="text-lg text-gray-300 mt-1">
+              {currentDate.getFullYear()}
+            </div>
+          </div>
+          
+          <button
+            onClick={() => navigateWeek('next')}
+            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
       </div>
 
       {/* Week days */}
-      <div className="px-6 pb-4">
+      <div className="bg-white px-6 pb-4">
         <div className="flex justify-between">
           {weekDays.map((day, index) => (
             <div key={index} className="text-center">
@@ -138,7 +163,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       </div>
 
       {/* Timeline visualization */}
-      <div className="flex-1 px-6 pb-4">
+      <div className="flex-1 px-6 pb-4 bg-white">
         <div className="relative h-full">
           {/* Time labels */}
           <div className="absolute left-0 top-0 h-full w-16 text-xs text-gray-400">
