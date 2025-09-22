@@ -176,7 +176,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
                   transform: 'translateY(-8px)'
                 }}
               >
-                <div className="w-2 h-px bg-gray-200 mr-2"></div>
+          
                 <div className="text-xs">{label.label}</div>
                 {label.hour === 6 && (
                   <div className="ml-1 text-yellow-500 text-xs">☀️</div>
