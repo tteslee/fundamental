@@ -172,7 +172,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
             {/* Timeline bar */}
             <div className="relative h-full">
               {/* Hour labels */}
-              <div className="absolute left-0 top-0 h-full w-16 text-xs text-gray-400">
+              <div className="absolute left-0 top-0 h-full w-20 text-xs text-gray-400">
                 {hourLabels.map((label, index) => (
                   <div 
                     key={index} 
@@ -189,7 +189,7 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
               </div>
 
               {/* Timeline visualization */}
-              <div className="ml-16 h-full relative">
+              <div className="ml-20 h-full relative">
                 {/* Records for this day */}
                 {dayRecords.map((record) => (
                   <RecordCard

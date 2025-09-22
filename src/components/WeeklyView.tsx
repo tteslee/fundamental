@@ -166,14 +166,14 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       <div className="flex-1 px-6 pb-4 bg-white">
         <div className="relative h-full">
           {/* Time labels */}
-          <div className="absolute left-0 top-0 h-full w-16 text-xs text-gray-400">
+          <div className="absolute left-0 top-0 h-full w-20 text-xs text-gray-400">
             {hourLabels.map((label, index) => (
               <div 
                 key={index} 
                 className="absolute flex items-center"
                 style={{ 
                   top: `${(index / (hourLabels.length - 1)) * 100}%`,
-                  transform: 'translateY(-50%)'
+                  transform: 'translateY(-8px)'
                 }}
               >
                 <div className="w-2 h-px bg-gray-200 mr-2"></div>
@@ -192,7 +192,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
           </div>
 
           {/* Timeline grid */}
-          <div className="ml-16 h-full relative">
+          <div className="ml-20 h-full relative">
             {/* Vertical lines for each day */}
             <div className="absolute inset-0 flex">
               {weekDays.map((day, dayIndex) => (
