@@ -16,6 +16,16 @@ export default function SignIn() {
   const captcha = useRef<HCaptcha>(null)
   const router = useRouter()
 
+  // Reset captcha when switching between login and register
+  const handleModeSwitch = (isRegisterMode: boolean) => {
+    setIsRegister(isRegisterMode)
+    setCaptchaToken(undefined)
+    setError('')
+    if (captcha.current) {
+      captcha.current.resetCaptcha()
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -23,6 +33,12 @@ export default function SignIn() {
 
     try {
       if (isRegister) {
+        // Check if captcha is completed for registration
+        if (!captchaToken) {
+          setError('Please complete the captcha verification')
+          setIsLoading(false)
+          return
+        }
         // Registration
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -125,7 +141,7 @@ export default function SignIn() {
         <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
           <button
             type="button"
-            onClick={() => setIsRegister(false)}
+            onClick={() => handleModeSwitch(false)}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               !isRegister
                 ? 'bg-white text-gray-900 shadow-sm'
@@ -136,7 +152,7 @@ export default function SignIn() {
           </button>
           <button
             type="button"
-            onClick={() => setIsRegister(true)}
+            onClick={() => handleModeSwitch(true)}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               isRegister
                 ? 'bg-white text-gray-900 shadow-sm'
@@ -200,15 +216,17 @@ export default function SignIn() {
             />
           </div>
 
-          <div className="flex justify-center">
-            <HCaptcha
-              ref={captcha}
-              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ''}
-              onVerify={(token) => {
-                setCaptchaToken(token)
-              }}
-            />
-          </div>
+          {isRegister && (
+            <div className="flex justify-center">
+              <HCaptcha
+                ref={captcha}
+                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ''}
+                onVerify={(token) => {
+                  setCaptchaToken(token)
+                }}
+              />
+            </div>
+          )}
 
           <button
             type="submit"
