@@ -118,7 +118,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
   return (
     <div className="h-screen flex flex-col">
       {/* Header with current date and navigation */}
-      <div className="bg-gray-900 text-white px-6 pt-16 pb-4">
+      <div className="bg-gray-900 text-white px-6 pt-16 pb-8">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigateWeek('prev')}
