@@ -146,57 +146,52 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       </div>
 
       {/* Week days */}
-      <div className="bg-white px-6 pt-6 pb-6">
+      <div className="bg-white px-4 pt-4 pb-4">
         <div className="flex">
-          {weekDays.map((day, index) => (
-            <div key={index} className="flex-1 text-center">
-              <div className={`text-sm font-medium ${
-                day.toDateString() === currentDate.toDateString() 
-                  ? 'text-blue-600' 
-                  : 'text-gray-500'
-              }`}>
-                {day.getDate()} {day.toLocaleDateString('ko-KR', { weekday: 'short' }).charAt(0)}
+          {/* Spacer to align with time labels */}
+          <div className="w-12"></div>
+          {/* Week days aligned with grid */}
+          <div className="flex-1 flex">
+            {weekDays.map((day, index) => (
+              <div key={index} className="flex-1 text-center">
+                <div className={`text-sm font-medium ${
+                  day.toDateString() === currentDate.toDateString() 
+                    ? 'text-blue-600' 
+                    : 'text-gray-500'
+                }`}>
+                  {day.getDate()} {day.toLocaleDateString('ko-KR', { weekday: 'short' }).charAt(0)}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Timeline visualization */}
       <div className="flex-1 px-6 pb-4 bg-white">
-        <div className="relative h-full">
+        <div className="relative h-full flex">
           {/* Time labels */}
-          <div className="absolute left-0 top-0 h-full w-20 text-xs text-gray-400">
+          <div className="w-12 h-full text-xs text-gray-400 relative py-4">
             {hourLabels.map((label, index) => (
               <div 
                 key={index} 
-                className="absolute flex items-center"
+                className="absolute text-left"
                 style={{ 
                   top: `${(index / (hourLabels.length - 1)) * 100}%`,
-                  transform: 'translateY(-8px)'
+                  transform: 'translateY(-50%)'
                 }}
               >
-          
-                  <div className="text-xs">{label.label}</div>
+                {label.label}
               </div>
             ))}
           </div>
 
-          {/* Timeline grid */}
-          <div className="ml-20 h-full relative">
+          {/* Grid area */}
+          <div className="flex-1 h-full relative">
             {/* Vertical lines for each day */}
             <div className="absolute inset-0 flex">
               {weekDays.map((day, dayIndex) => (
-                <div key={dayIndex} className="flex-1 relative">
-                  {/* Hour lines */}
-                  {hourLabels.map((_, hourIndex) => (
-                    <div
-                      key={hourIndex}
-                      className="absolute w-full h-px bg-gray-100"
-                      style={{ top: `${(hourIndex / (hourLabels.length - 1)) * 100}%` }}
-                    />
-                  ))}
-                  
+                <div key={dayIndex} className="flex-1 relative bg-gray-50 rounded-2xl mx-4">
                   {/* Records for this day */}
                   {getRecordsForDay(day).map((record) => (
                     <RecordCard
@@ -217,11 +212,16 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       {/* Daily sleep duration */}
       <div className="px-6 pb-4">
         <div className="flex text-sm text-gray-600">
-          {weekDays.map((day, index) => (
-            <div key={index} className="flex-1 text-center">
-              {getSleepDuration(day)}
-            </div>
-          ))}
+          {/* Spacer to align with time labels */}
+          <div className="w-12"></div>
+          {/* Sleep durations aligned with grid */}
+          <div className="flex-1 flex">
+            {weekDays.map((day, index) => (
+              <div key={index} className="flex-1 text-center">
+                {getSleepDuration(day)}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
