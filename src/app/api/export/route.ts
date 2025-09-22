@@ -74,6 +74,23 @@ export async function POST(request: NextRequest) {
 function generateCSV(records: any[]): string {
   console.log('CSV generation - First record raw data:', records[0])
   
+  // Format functions
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
+  }
+  
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
+  }
+
   const csvData = records.map((record, index) => {
     // Parse dates and format them consistently
     const startTime = new Date(record.startTime)
@@ -85,31 +102,23 @@ function generateCSV(records: any[]): string {
       console.log(`Record ${index}:`, {
         originalStartTime: record.startTime,
         parsedStartTime: startTime,
+        parsedStartTimeISO: startTime.toISOString(),
+        parsedStartTimeLocal: startTime.toString(),
         originalEndTime: record.endTime,
-        parsedEndTime: endTime
-      })
-    }
-    
-    // Format times to match what's shown in the app
-    const formatTime = (date: Date) => {
-      return date.toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
+        parsedEndTime: endTime,
+        formattedTime: formatTime(startTime),
+        timezoneOffset: startTime.getTimezoneOffset()
       })
     }
     
     return {
       '유형': record.type === 'sleep' ? '수면' : record.type === 'food' ? '식사' : '약물',
+      '날짜': formatDate(startTime),
       '시작 시간': formatTime(startTime),
       '종료 시간': endTime ? formatTime(endTime) : '',
       '지속 시간': record.duration ? `${Math.floor(record.duration / 60)}시간 ${record.duration % 60}분` : '',
       '메모': record.memo || '',
-      '생성일': formatTime(createdAt),
+      '생성일': formatDate(createdAt),
     }
   })
 

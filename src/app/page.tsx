@@ -58,6 +58,22 @@ export default function Home() {
           const data = await response.json()
           console.log('Fetched records from API:', data)
           console.log('Number of records fetched:', data.length)
+          
+          // Debug first record time
+          if (data.length > 0) {
+            const firstRecord = data[0]
+            console.log('First record time debug:', {
+              originalStartTime: firstRecord.startTime,
+              parsedStartTime: new Date(firstRecord.startTime),
+              formattedTime: new Date(firstRecord.startTime).toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+              }),
+              timezoneOffset: new Date(firstRecord.startTime).getTimezoneOffset()
+            })
+          }
+          
           setRecords(data)
         } else {
           console.error('Failed to fetch records')
