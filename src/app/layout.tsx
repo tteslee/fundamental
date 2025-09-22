@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: 'Fundamental - Track Your Daily Habits',
   description: 'Empowering people to set core habits for a healthier life',
 }
+import { Analytics } from "@vercel/analytics/next";
 
 export default function RootLayout({
   children,
@@ -21,6 +22,7 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
