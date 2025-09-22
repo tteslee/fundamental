@@ -216,9 +216,9 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
 
       {/* Daily sleep duration */}
       <div className="px-6 pb-4">
-        <div className="flex justify-between text-sm text-gray-600">
+        <div className="flex text-sm text-gray-600">
           {weekDays.map((day, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="flex-1 text-center">
               {getSleepDuration(day)}
             </div>
           ))}
