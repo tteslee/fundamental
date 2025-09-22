@@ -32,13 +32,14 @@ export default function SignIn() {
     setError('')
 
     try {
+      // Check if captcha is completed for both login and registration
+      if (!captchaToken) {
+        setError('Please complete the captcha verification')
+        setIsLoading(false)
+        return
+      }
+
       if (isRegister) {
-        // Check if captcha is completed for registration
-        if (!captchaToken) {
-          setError('Please complete the captcha verification')
-          setIsLoading(false)
-          return
-        }
         // Registration
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -89,6 +90,9 @@ export default function SignIn() {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
+          options: {
+            captchaToken: captchaToken || undefined
+          }
         })
 
         if (error) {
@@ -118,6 +122,9 @@ export default function SignIn() {
           } catch (error) {
             console.error('Error creating/verifying user record:', error)
           }
+          
+          // Reset captcha after successful login
+          captcha.current?.resetCaptcha()
           
           router.push('/')
         }
@@ -216,17 +223,15 @@ export default function SignIn() {
             />
           </div>
 
-          {isRegister && (
-            <div className="flex justify-center">
-              <HCaptcha
-                ref={captcha}
-                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ''}
-                onVerify={(token) => {
-                  setCaptchaToken(token)
-                }}
-              />
-            </div>
-          )}
+          <div className="flex justify-center">
+            <HCaptcha
+              ref={captcha}
+              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || ''}
+              onVerify={(token) => {
+                setCaptchaToken(token)
+              }}
+            />
+          </div>
 
           <button
             type="submit"
