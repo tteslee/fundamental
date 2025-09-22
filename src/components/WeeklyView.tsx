@@ -171,7 +171,10 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
               <div 
                 key={index} 
                 className="absolute flex items-center"
-                style={{ top: `${(index / (hourLabels.length - 1)) * 100}%` }}
+                style={{ 
+                  top: `${(index / (hourLabels.length - 1)) * 100}%`,
+                  transform: 'translateY(-50%)'
+                }}
               >
                 <div className="w-2 h-px bg-gray-200 mr-2"></div>
                 <div className="text-xs">{label.label}</div>
