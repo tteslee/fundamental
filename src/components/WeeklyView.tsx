@@ -141,26 +141,30 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
       <div className="flex-1 px-6 pb-4">
         <div className="relative h-full">
           {/* Time labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 pb-16">
+          <div className="absolute left-0 top-0 h-full w-16 text-xs text-gray-400">
             {hourLabels.map((label, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -left-2 top-0 w-1 h-px bg-gray-200"></div>
-                <div className="ml-2">{label.label}</div>
+              <div 
+                key={index} 
+                className="absolute flex items-center"
+                style={{ top: `${(index / (hourLabels.length - 1)) * 100}%` }}
+              >
+                <div className="w-2 h-px bg-gray-200 mr-2"></div>
+                <div className="text-xs">{label.label}</div>
                 {label.hour === 6 && (
-                  <div className="absolute -left-1 top-0 w-3 h-3 text-yellow-500">☀️</div>
+                  <div className="ml-1 text-yellow-500 text-xs">☀️</div>
                 )}
                 {label.hour === 12 && (
-                  <div className="absolute -left-1 top-0 w-3 h-3 text-yellow-500">☀️</div>
+                  <div className="ml-1 text-yellow-500 text-xs">☀️</div>
                 )}
                 {label.hour === 0 && (
-                  <div className="absolute -left-1 top-0 w-3 h-3 text-blue-500">🌙</div>
+                  <div className="ml-1 text-blue-500 text-xs">🌙</div>
                 )}
               </div>
             ))}
           </div>
 
           {/* Timeline grid */}
-          <div className="ml-8 h-full relative">
+          <div className="ml-16 h-full relative">
             {/* Vertical lines for each day */}
             <div className="absolute inset-0 flex">
               {weekDays.map((day, dayIndex) => (

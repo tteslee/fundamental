@@ -172,17 +172,21 @@ export default function DailyView({ records, onAddRecord, onEditRecord, onDelete
             {/* Timeline bar */}
             <div className="relative h-full">
               {/* Hour labels */}
-              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 pb-16">
+              <div className="absolute left-0 top-0 h-full w-16 text-xs text-gray-400">
                 {hourLabels.map((label, index) => (
-                  <div key={index} className="relative">
-                    <div className="absolute -left-2 top-0 w-1 h-px bg-gray-200"></div>
-                    <div className="ml-2">{label.label}</div>
+                  <div 
+                    key={index} 
+                    className="absolute flex items-center"
+                    style={{ top: `${(index / (hourLabels.length - 1)) * 100}%` }}
+                  >
+                    <div className="w-2 h-px bg-gray-200 mr-2"></div>
+                    <div className="text-xs">{label.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Timeline visualization */}
-              <div className="ml-8 h-full relative">
+              <div className="ml-16 h-full relative">
                 {/* Records for this day */}
                 {dayRecords.map((record) => (
                   <RecordCard
