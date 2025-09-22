@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       recordsCount: body.records?.length || 0 
     })
     
-    const { format, startDate, endDate, records = [] } = body
+    const { format, startDate, endDate, records = [], timezone } = body
     
     if (!startDate || !endDate) {
       console.error('Missing required dates:', { startDate, endDate })
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (format === 'csv') {
       try {
-        const csv = generateCSV(exportRecords)
+        const csv = generateCSV(exportRecords, timezone)
         return new NextResponse(csv, {
           headers: {
             'Content-Type': 'text/csv',
@@ -71,15 +71,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateCSV(records: any[]): string {
+function generateCSV(records: any[], timezone?: string): string {
   console.log('CSV generation - First record raw data:', records[0])
+  console.log('CSV generation - User timezone:', timezone)
   
-  // Format functions
+  // Format functions with timezone support
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('ko-KR', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false
+      hour12: false,
+      timeZone: timezone || 'Asia/Seoul'
     })
   }
   
@@ -87,7 +89,8 @@ function generateCSV(records: any[]): string {
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
+      timeZone: timezone || 'Asia/Seoul'
     })
   }
 

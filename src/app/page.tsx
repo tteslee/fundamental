@@ -291,6 +291,10 @@ export default function Home() {
       const startDate = new Date()
       startDate.setDate(startDate.getDate() - 30)
       
+      // Get user's timezone
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      console.log('User timezone:', userTimezone)
+      
       // If no records, fetch them first
       if (records.length === 0) {
         console.log('No records in state, fetching from API...')
@@ -310,7 +314,7 @@ export default function Home() {
             }))
             
             console.log('Using fetched records for export:', serializedRecords.length, 'records')
-            await performExport(format, serializedRecords, startDate, endDate)
+            await performExport(format, serializedRecords, startDate, endDate, userTimezone)
             return
           }
         } catch (error) {
@@ -331,7 +335,7 @@ export default function Home() {
       console.log('First record:', serializedRecords[0])
       console.log('Sending export request:', { format, startDate: startDate.toISOString(), endDate: endDate.toISOString(), recordsCount: serializedRecords.length })
       
-      await performExport(format, serializedRecords, startDate, endDate)
+      await performExport(format, serializedRecords, startDate, endDate, userTimezone)
     } catch (error) {
       console.error('Error exporting data:', error)
       alert('내보내기에 실패했습니다. 다시 시도해주세요.')
@@ -340,7 +344,7 @@ export default function Home() {
     }
   }
 
-  const performExport = async (format: string, serializedRecords: any[], startDate: Date, endDate: Date) => {
+  const performExport = async (format: string, serializedRecords: any[], startDate: Date, endDate: Date, timezone?: string) => {
     const response = await fetch('/api/export', {
       method: 'POST',
       headers: {
@@ -351,6 +355,7 @@ export default function Home() {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         records: serializedRecords,
+        timezone: timezone,
       }),
     })
     
