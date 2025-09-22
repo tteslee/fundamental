@@ -147,9 +147,9 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
 
       {/* Week days */}
       <div className="bg-white px-6 pt-6 pb-6">
-        <div className="flex justify-between">
+        <div className="flex">
           {weekDays.map((day, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="flex-1 text-center">
               <div className={`text-sm font-medium ${
                 day.toDateString() === currentDate.toDateString() 
                   ? 'text-blue-600' 
@@ -177,16 +177,7 @@ export default function WeeklyView({ records, onAddRecord, onEditRecord, onDelet
                 }}
               >
           
-                <div className="text-xs">{label.label}</div>
-                {label.hour === 6 && (
-                  <div className="ml-1 text-yellow-500 text-xs">☀️</div>
-                )}
-                {label.hour === 12 && (
-                  <div className="ml-1 text-yellow-500 text-xs">☀️</div>
-                )}
-                {label.hour === 0 && (
-                  <div className="ml-1 text-blue-500 text-xs">🌙</div>
-                )}
+                  <div className="text-xs">{label.label}</div>
               </div>
             ))}
           </div>
